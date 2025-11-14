@@ -1,0 +1,157 @@
+<div class="min-h-screen bg-neutral-50 flex">
+  <div
+    *ngIf="mobileMenuOpen"
+    class="fixed inset-0 bg-neutral-900 bg-opacity-50 z-20 lg:hidden"
+    (click)="toggleMobileMenu()"
+  ></div>
+  
+  <aside
+    [class.w-64]="!sidebarCollapsed"
+    [class.w-20]="sidebarCollapsed"
+    [class.-translate-x-full]="!mobileMenuOpen"
+    class="bg-white shadow-soft border-r border-neutral-200 fixed h-screen transition-all duration-300 z-30 lg:translate-x-0"
+  >
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-between h-16 px-4 border-b border-neutral-200">
+        <h1
+          *ngIf="!sidebarCollapsed"
+          class="text-xl font-bold text-neutral-900"
+        >
+          <i class="fas fa-cube mr-2 text-primary-600"></i>
+          Erika
+        </h1>
+        <i
+          *ngIf="sidebarCollapsed"
+          class="fas fa-cube text-2xl text-primary-600"
+        ></i>
+        <button
+          (click)="toggleSidebar()"
+          class="p-2 rounded-lg hover:bg-neutral-100 transition-colors hidden lg:block"
+        >
+          <i [class.fa-bars]="!sidebarCollapsed" [class.fa-chevron-right]="sidebarCollapsed" class="fas text-neutral-700"></i>
+        </button>
+        <button
+          (click)="toggleMobileMenu()"
+          class="p-2 rounded-lg hover:bg-neutral-100 transition-colors lg:hidden"
+        >
+          <i class="fas fa-times text-neutral-700"></i>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-4">
+        <ul class="space-y-1 px-2">
+          <li>
+            <a
+              routerLink="/admin/dashboard"
+              routerLinkActive="bg-primary-50 text-primary-700 border-r-2 border-primary-600"
+              [routerLinkActiveOptions]="{ exact: false }"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-tachometer-alt w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/admin/clientes"
+              routerLinkActive="bg-primary-50 text-primary-700 border-r-2 border-primary-600"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-users w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Clientes</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-box w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Paquetes</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-cog w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Servicios</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-file-invoice-dollar w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Cobros</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-credit-card w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Pagos</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+            >
+              <i class="fas fa-chart-bar w-5"></i>
+              <span *ngIf="!sidebarCollapsed" class="ml-3">Reportes</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="border-t border-neutral-200 p-4">
+        <button
+          (click)="logout()"
+          class="w-full flex items-center px-4 py-3 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
+        >
+          <i class="fas fa-sign-out-alt w-5"></i>
+          <span *ngIf="!sidebarCollapsed" class="ml-3">Cerrar sesión</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div
+    class="flex-1 transition-all duration-300 w-full"
+    [ngClass]="{
+      'ml-0': !mobileMenuOpen,
+      'ml-64': !sidebarCollapsed && mobileMenuOpen,
+      'ml-20': sidebarCollapsed && mobileMenuOpen,
+      'lg:ml-64': !sidebarCollapsed,
+      'lg:ml-20': sidebarCollapsed
+    }"
+  >
+    <header class="bg-white shadow-soft border-b border-neutral-200 sticky top-0 z-20">
+      <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+        <button
+          (click)="toggleMobileMenu()"
+          class="p-2 rounded-lg hover:bg-neutral-100 transition-colors lg:hidden"
+        >
+          <i class="fas fa-bars text-neutral-700"></i>
+        </button>
+        <div class="flex items-center space-x-4 ml-auto">
+          <div class="w-10 h-10 bg-neutral-200 rounded-lg flex items-center justify-center">
+          </div>
+          <div class="flex items-center space-x-2">
+            <i class="fas fa-user-circle text-neutral-500"></i>
+            <span class="text-sm text-neutral-700 hidden sm:block">Usuario</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

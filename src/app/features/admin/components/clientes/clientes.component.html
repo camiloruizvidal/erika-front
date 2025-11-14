@@ -1,0 +1,17 @@
+<app-tabla-paginada
+  titulo="Clientes"
+  textoBotonCrear="Nuevo Cliente"
+  iconoBotonCrear="fa-user-plus"
+  placeholderBusqueda="Buscar por nombre, correo o teléfono..."
+  [datos]="datos"
+  [cargando]="cargando"
+  [columnas]="columnas"
+  [acciones]="true"
+  (crear)="onCrear()"
+  (buscar)="onBuscar($event)"
+  (cambiarPagina)="onCambiarPagina($event)"
+  (cambiarTamanoPagina)="onCambiarTamanoPagina($event)"
+  (filaClick)="onFilaClick($event)"
+  (ordenar)="onOrdenar($event)"
+  (accionSeleccionada)="onAccionSeleccionada($event)"
+></app-tabla-paginada>
