@@ -9,12 +9,13 @@ export interface IColumnaTabla {
   ancho?: string;
   formatear?: (valor: any, item: any) => string;
   renderizarHtml?: boolean;
+  componentePersonalizado?: string;
 }
 
 @Component({
   selector: 'app-tabla-paginada',
   templateUrl: './tabla-paginada.component.html',
-  styleUrls: ['./tabla-paginada.component.scss']
+  styleUrls: ['./tabla-paginada.component.scss'],
 })
 export class TablaPaginadaComponent {
   Math = Math;
@@ -38,8 +39,14 @@ export class TablaPaginadaComponent {
   @Output() cambiarPagina = new EventEmitter<number>();
   @Output() cambiarTamanoPagina = new EventEmitter<number>();
   @Output() filaClick = new EventEmitter<any>();
-  @Output() ordenar = new EventEmitter<{ campo: string; direccion: 'asc' | 'desc' }>();
-  @Output() accionSeleccionada = new EventEmitter<{ item: any; accion: string }>();
+  @Output() ordenar = new EventEmitter<{
+    campo: string;
+    direccion: 'asc' | 'desc';
+  }>();
+  @Output() accionSeleccionada = new EventEmitter<{
+    item: any;
+    accion: string;
+  }>();
 
   terminoBusqueda = '';
   campoOrden: string | null = null;
@@ -77,7 +84,10 @@ export class TablaPaginadaComponent {
       this.campoOrden = campo;
       this.direccionOrden = 'asc';
     }
-    this.ordenar.emit({ campo: this.campoOrden, direccion: this.direccionOrden });
+    this.ordenar.emit({
+      campo: this.campoOrden,
+      direccion: this.direccionOrden,
+    });
   }
 
   obtenerValor(item: any, campo: string): any {
@@ -105,11 +115,13 @@ export class TablaPaginadaComponent {
     if (!this.datos?.meta.total_paginas) {
       return [];
     }
-    return Array.from({ length: this.datos.meta.total_paginas }, (_, i) => i + 1);
+    return Array.from(
+      { length: this.datos.meta.total_paginas },
+      (_, i) => i + 1
+    );
   }
 
   onAccionSeleccionada(item: any, accion: string): void {
     this.accionSeleccionada.emit({ item, accion });
   }
 }
-

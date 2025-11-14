@@ -1,14 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { IServicio } from '../paquetes/interfaces/servicio.interface';
 import { IPaquete } from '../paquetes/interfaces/paquete.interface';
-import moment from 'moment';
+import { ServiciosService } from '../../services/servicios.service';
 
 @Component({
   selector: 'app-servicios',
@@ -44,47 +42,14 @@ export class ServiciosComponent implements OnInit, OnDestroy {
       nombre: 'Paquetes',
       campo: 'paquetes',
       ordenable: false,
-      renderizarHtml: true,
-      formatear: (valor: any[] | undefined, item: any) => {
-        if (!valor || valor.length === 0) {
-          return '-';
-        }
-        return valor
-          .map((paquete: any, index: number) => {
-            const colorPunto = paquete.activo
-              ? 'bg-success-500'
-              : 'bg-error-500';
-            const fechaInicio = paquete.fecha_inicio
-              ? moment(paquete.fecha_inicio).format('DD/MM/YYYY')
-              : '-';
-            const fechaFin = paquete.fecha_fin
-              ? moment(paquete.fecha_fin).format('DD/MM/YYYY')
-              : '-';
-            const separador =
-              index < valor.length - 1
-                ? '<div class="border-t border-neutral-200 my-2"></div>'
-                : '';
-            return `
-              <div class="flex items-start gap-2 mb-2 last:mb-0">
-                <span class="w-2 h-2 rounded-full ${colorPunto} mt-2 flex-shrink-0"></span>
-                <div class="flex-1">
-                  <div class="font-medium text-neutral-900">${paquete.nombre}</div>
-                  <div class="text-xs text-neutral-500 mt-1">
-                    <span>Inicio: ${fechaInicio}</span>
-                    <span class="mx-2">•</span>
-                    <span>Fin: ${fechaFin}</span>
-                  </div>
-                </div>
-              </div>
-              ${separador}
-            `;
-          })
-          .join('');
-      },
+      componentePersonalizado: 'app-paquetes-lista',
     },
   ];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private serviciosService: ServiciosService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.busquedaSubscription = this.busquedaSubject
@@ -104,20 +69,16 @@ export class ServiciosComponent implements OnInit, OnDestroy {
 
   cargarPaquetes(): void {
     this.cargandoPaquetes = true;
-    this.http
-      .get<IPaginado<IPaquete>>(
-        `${environment.apiUrl}/api/v1/packages?pagina=1&tamano_pagina=1000`
-      )
-      .subscribe({
-        next: (respuesta) => {
-          this.paquetes = respuesta.data;
-          this.cargandoPaquetes = false;
-        },
-        error: (error) => {
-          console.error('Error al cargar paquetes:', error);
-          this.cargandoPaquetes = false;
-        },
-      });
+    this.serviciosService.listarPaquetes().subscribe({
+      next: (respuesta) => {
+        this.paquetes = respuesta.data;
+        this.cargandoPaquetes = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar paquetes:', error);
+        this.cargandoPaquetes = false;
+      },
+    });
   }
 
   cargarServicios(): void {
@@ -135,7 +96,7 @@ export class ServiciosComponent implements OnInit, OnDestroy {
       params.paquete_id = this.paqueteIdFiltro;
     }
 
-    this.obtenerServicios(params).subscribe({
+    this.serviciosService.listar(params).subscribe({
       next: (respuesta) => {
         this.datos = respuesta;
         this.cargando = false;
@@ -145,13 +106,6 @@ export class ServiciosComponent implements OnInit, OnDestroy {
         this.cargando = false;
       },
     });
-  }
-
-  obtenerServicios(params: any): Observable<IPaginado<IServicio>> {
-    const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<IServicio>>(
-      `${environment.apiUrl}/api/v1/services?${queryString}`
-    );
   }
 
   onBuscar(termino: string): void {

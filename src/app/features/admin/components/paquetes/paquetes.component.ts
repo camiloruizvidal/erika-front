@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { IPaquete, IFiltrosPaquete } from './interfaces/paquete.interface';
 import moment from 'moment';
+import { PaquetesService } from '../../services/paquetes.service';
 
 @Component({
   selector: 'app-paquetes',
@@ -65,7 +64,10 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     },
   ];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private paquetesService: PaquetesService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.busquedaSubscription = this.busquedaSubject
@@ -106,7 +108,7 @@ export class PaquetesComponent implements OnInit, OnDestroy {
       params.fecha_fin = moment(this.filtros.fecha_fin).format('YYYY-MM-DD');
     }
 
-    this.obtenerPaquetes(params).subscribe({
+    this.paquetesService.listar(params).subscribe({
       next: (respuesta) => {
         this.datos = respuesta;
         this.cargando = false;
@@ -116,13 +118,6 @@ export class PaquetesComponent implements OnInit, OnDestroy {
         this.cargando = false;
       },
     });
-  }
-
-  obtenerPaquetes(params: any): Observable<IPaginado<IPaquete>> {
-    const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<IPaquete>>(
-      `${environment.apiUrl}/api/v1/packages?${queryString}`
-    );
   }
 
   onCrear(): void {

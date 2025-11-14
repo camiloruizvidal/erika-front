@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import moment from 'moment';
-import { environment } from '../../../../../../environments/environment';
 import { IPaginado } from '../../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { NotificationService } from '../../../../../shared/services/notification.service';
 import { IServicio, ICrearPaqueteRequest } from '../interfaces/servicio.interface';
+import { PaquetesService } from '../../../services/paquetes.service';
+import { ServiciosService } from '../../../services/servicios.service';
 
 @Component({
   selector: 'app-crear-paquete',
@@ -49,7 +49,8 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private http: HttpClient,
+    private paquetesService: PaquetesService,
+    private serviciosService: ServiciosService,
     private router: Router,
     private notificationService: NotificationService
   ) {}
@@ -97,7 +98,7 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
       params.nombre = this.terminoBusqueda.trim();
     }
 
-    this.obtenerServicios(params).subscribe({
+    this.serviciosService.listar(params).subscribe({
       next: (respuesta) => {
         this.servicios = respuesta;
         respuesta.data.forEach((servicio) => {
@@ -113,12 +114,6 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
     });
   }
 
-  obtenerServicios(params: any): Observable<IPaginado<IServicio>> {
-    const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<IServicio>>(
-      `${environment.apiUrl}/api/v1/services?${queryString}`
-    );
-  }
 
   onBuscar(termino: string): void {
     this.busquedaSubject.next(termino);
@@ -242,7 +237,7 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
     };
 
     this.cargando = true;
-    this.http.post(`${environment.apiUrl}/api/v1/packages`, payload).subscribe({
+    this.paquetesService.crear(payload).subscribe({
       next: () => {
         this.notificationService.exito('Paquete creado exitosamente');
         this.router.navigate(['/admin/paquetes']);

@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import moment from 'moment';
-import { environment } from '../../../../../../environments/environment';
 import {
   ITipoDocumento,
   ICrearClienteRequest,
 } from '../interfaces/cliente.interface';
 import { NotificationService } from '../../../../../shared/services/notification.service';
 import { TIPOS_DOCUMENTO } from '../../../../../shared/constants/tipos-documento.constant';
+import { ClientesService } from '../../../services/clientes.service';
 
 @Component({
   selector: 'app-crear-cliente',
@@ -25,7 +24,7 @@ export class CrearClienteComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private http: HttpClient,
+    private clientesService: ClientesService,
     private router: Router,
     private notificationService: NotificationService
   ) {}
@@ -100,7 +99,7 @@ export class CrearClienteComponent implements OnInit {
       datos.direccion = this.formulario.value.direccion.trim();
     }
 
-    this.http.post(`${environment.apiUrl}/api/v1/customers`, datos).subscribe({
+    this.clientesService.crear(datos).subscribe({
       next: () => {
         this.cargando = false;
         this.notificationService

@@ -1,0 +1,18 @@
+<div *ngIf="paquetes.length === 0" class="text-neutral-500">-</div>
+<div *ngFor="let paquete of paquetes; let last = last" class="mb-2 last:mb-0">
+  <div class="flex items-start gap-2">
+    <span
+      class="w-2 h-2 rounded-full mt-2 flex-shrink-0"
+      [ngClass]="obtenerColorPunto(paquete.activo)"
+    ></span>
+    <div class="flex-1">
+      <div class="font-medium text-neutral-900">{{ paquete.nombre }}</div>
+      <div class="text-xs text-neutral-500 mt-1">
+        <span>Inicio: {{ formatearFecha(paquete.fecha_inicio) }}</span>
+        <span class="mx-2">•</span>
+        <span>Fin: {{ formatearFecha(paquete.fecha_fin) }}</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!last" class="border-t border-neutral-200 my-2"></div>
+</div>

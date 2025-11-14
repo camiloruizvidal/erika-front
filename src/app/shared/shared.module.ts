@@ -4,12 +4,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ListadoBaseComponent } from './components/listado-base/listado-base.component';
 import { TablaPaginadaComponent } from './components/tabla-paginada/tabla-paginada.component';
 import { DatepickerComponent } from './components/datepicker/datepicker.component';
+import { PaquetesListaComponent } from './components/paquetes-lista/paquetes-lista.component';
 
 @NgModule({
   declarations: [
     ListadoBaseComponent,
     TablaPaginadaComponent,
-    DatepickerComponent
+    DatepickerComponent,
+    PaquetesListaComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +21,8 @@ import { DatepickerComponent } from './components/datepicker/datepicker.componen
   exports: [
     ListadoBaseComponent,
     TablaPaginadaComponent,
-    DatepickerComponent
+    DatepickerComponent,
+    PaquetesListaComponent
   ]
 })
 export class SharedModule { }

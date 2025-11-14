@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../../../../environments/environment';
 import { IPaginado } from '../../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import {
@@ -11,6 +8,7 @@ import {
 } from '../interfaces/paquete.interface';
 import moment from 'moment';
 import 'moment/locale/es';
+import { PaquetesService } from '../../../services/paquetes.service';
 
 @Component({
   selector: 'app-detalle-paquete',
@@ -42,7 +40,7 @@ export class DetallePaqueteComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private paquetesService: PaquetesService
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +56,7 @@ export class DetallePaqueteComponent implements OnInit {
     if (!this.paqueteId) return;
 
     this.cargandoPaquete = true;
-    this.obtenerDetallePaquete(this.paqueteId).subscribe({
+    this.paquetesService.obtenerPorId(this.paqueteId).subscribe({
       next: (respuesta) => {
         this.paquete = respuesta;
         this.servicios = respuesta.servicios || [];
@@ -69,12 +67,6 @@ export class DetallePaqueteComponent implements OnInit {
         this.cargandoPaquete = false;
       },
     });
-  }
-
-  obtenerDetallePaquete(paqueteId: number): Observable<IPaqueteDetalle> {
-    return this.http.get<IPaqueteDetalle>(
-      `${environment.apiUrl}/api/v1/packages/${paqueteId}`
-    );
   }
 
   onFilaClick(servicio: IServicioAsociado): void {

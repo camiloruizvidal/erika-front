@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { ICliente } from './interfaces/cliente.interface';
+import { ClientesService } from '../../services/clientes.service';
 
 @Component({
   selector: 'app-clientes',
@@ -35,7 +34,10 @@ export class ClientesComponent implements OnInit, OnDestroy {
     },
   ];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private clientesService: ClientesService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.busquedaSubscription = this.busquedaSubject
@@ -63,7 +65,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
       params.filtro = this.terminoBusqueda.trim();
     }
 
-    this.obtenerClientes(params).subscribe({
+    this.clientesService.listar(params).subscribe({
       next: (respuesta) => {
         this.datos = respuesta;
         this.cargando = false;
@@ -73,13 +75,6 @@ export class ClientesComponent implements OnInit, OnDestroy {
         this.cargando = false;
       },
     });
-  }
-
-  obtenerClientes(params: any): Observable<IPaginado<ICliente>> {
-    const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<ICliente>>(
-      `${environment.apiUrl}/api/v1/customers?${queryString}`
-    );
   }
 
   onCrear(): void {
