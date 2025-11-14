@@ -39,10 +39,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.busquedaSubscription = this.busquedaSubject
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
+      .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((termino) => {
         this.terminoBusqueda = termino;
         this.paginaActual = 1;
