@@ -56,10 +56,17 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   cargarClientes(): void {
     this.cargando = true;
-    const params: any = {
+    const params: {
+      pagina: number;
+      tamano_pagina?: number;
+      filtro?: string;
+    } = {
       pagina: this.paginaActual,
-      tamano_pagina: this.tamanoPagina,
     };
+
+    if (this.tamanoPagina !== 10) {
+      params.tamano_pagina = this.tamanoPagina;
+    }
 
     if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
       params.filtro = this.terminoBusqueda.trim();

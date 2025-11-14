@@ -83,10 +83,18 @@ export class ServiciosComponent implements OnInit, OnDestroy {
 
   cargarServicios(): void {
     this.cargando = true;
-    const params: any = {
+    const params: {
+      pagina: number;
+      tamano_pagina?: number;
+      nombre?: string;
+      paquete_id?: number;
+    } = {
       pagina: this.paginaActual,
-      tamano_pagina: this.tamanoPagina,
     };
+
+    if (this.tamanoPagina !== 10) {
+      params.tamano_pagina = this.tamanoPagina;
+    }
 
     if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
       params.nombre = this.terminoBusqueda.trim();

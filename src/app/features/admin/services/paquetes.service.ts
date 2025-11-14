@@ -9,6 +9,7 @@ import {
   IPaqueteDetalle,
 } from '../components/paquetes/interfaces/paquete.interface';
 import { ICrearPaqueteRequest } from '../components/paquetes/interfaces/servicio.interface';
+import { QueryParamsUtil } from '../../../shared/utils/query-params.util';
 
 @Injectable({
   providedIn: 'root',
@@ -20,18 +21,23 @@ export class PaquetesService {
 
   listar(params: {
     pagina: number;
-    tamano_pagina: number;
+    tamano_pagina?: number;
     nombre?: string;
     activo?: boolean;
     fecha_inicio?: string;
     fecha_fin?: string;
   }): Observable<IPaginado<IPaquete>> {
-    const queryString = new URLSearchParams(
-      params as any
-    ).toString();
-    return this.http.get<IPaginado<IPaquete>>(
-      `${this.apiUrl}?${queryString}`
-    );
+    const paramsConDefault = {
+      pagina: params.pagina,
+      tamano_pagina: params.tamano_pagina ?? 10,
+      ...(params.nombre && { nombre: params.nombre }),
+      ...(params.activo !== undefined &&
+        params.activo !== null && { activo: params.activo }),
+      ...(params.fecha_inicio && { fecha_inicio: params.fecha_inicio }),
+      ...(params.fecha_fin && { fecha_fin: params.fecha_fin }),
+    };
+    const queryString = QueryParamsUtil.construir(paramsConDefault);
+    return this.http.get<IPaginado<IPaquete>>(`${this.apiUrl}?${queryString}`);
   }
 
   obtenerPorId(id: number): Observable<IPaqueteDetalle> {
@@ -42,4 +48,3 @@ export class PaquetesService {
     return this.http.post<IPaquete>(this.apiUrl, datos);
   }
 }
-

@@ -7,6 +7,7 @@ import {
   ICliente,
   ICrearClienteRequest,
 } from '../components/clientes/interfaces/cliente.interface';
+import { QueryParamsUtil } from '../../../shared/utils/query-params.util';
 
 @Injectable({
   providedIn: 'root',
@@ -18,10 +19,15 @@ export class ClientesService {
 
   listar(params: {
     pagina: number;
-    tamano_pagina: number;
+    tamano_pagina?: number;
     filtro?: string;
   }): Observable<IPaginado<ICliente>> {
-    const queryString = new URLSearchParams(params as any).toString();
+    const paramsConDefault = {
+      pagina: params.pagina,
+      tamano_pagina: params.tamano_pagina ?? 10,
+      ...(params.filtro && { filtro: params.filtro }),
+    };
+    const queryString = QueryParamsUtil.construir(paramsConDefault);
     return this.http.get<IPaginado<ICliente>>(`${this.apiUrl}?${queryString}`);
   }
 

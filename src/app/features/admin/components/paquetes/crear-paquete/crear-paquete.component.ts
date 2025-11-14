@@ -7,7 +7,10 @@ import moment from 'moment';
 import { IPaginado } from '../../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { NotificationService } from '../../../../../shared/services/notification.service';
-import { IServicio, ICrearPaqueteRequest } from '../interfaces/servicio.interface';
+import {
+  IServicio,
+  ICrearPaqueteRequest,
+} from '../interfaces/servicio.interface';
 import { PaquetesService } from '../../../services/paquetes.service';
 import { ServiciosService } from '../../../services/servicios.service';
 
@@ -89,10 +92,17 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
 
   cargarServicios(): void {
     this.cargandoServicios = true;
-    const params: any = {
+    const params: {
+      pagina: number;
+      tamano_pagina?: number;
+      nombre?: string;
+    } = {
       pagina: this.paginaActual,
-      tamano_pagina: this.tamanoPagina,
     };
+
+    if (this.tamanoPagina !== 10) {
+      params.tamano_pagina = this.tamanoPagina;
+    }
 
     if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
       params.nombre = this.terminoBusqueda.trim();
@@ -114,7 +124,6 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
     });
   }
 
-
   onBuscar(termino: string): void {
     this.busquedaSubject.next(termino);
   }
@@ -124,7 +133,6 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
     this.paginaActual = 1;
     this.busquedaSubject.next('');
   }
-
 
   onCambiarPagina(pagina: number): void {
     this.paginaActual = pagina;
@@ -289,4 +297,3 @@ export class CrearPaqueteComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/paquetes']);
   }
 }
-

@@ -86,10 +86,20 @@ export class PaquetesComponent implements OnInit, OnDestroy {
 
   cargarPaquetes(): void {
     this.cargando = true;
-    const params: any = {
+    const params: {
+      pagina: number;
+      tamano_pagina?: number;
+      nombre?: string;
+      activo?: boolean;
+      fecha_inicio?: string;
+      fecha_fin?: string;
+    } = {
       pagina: this.paginaActual,
-      tamano_pagina: this.tamanoPagina,
     };
+
+    if (this.tamanoPagina !== 10) {
+      params.tamano_pagina = this.tamanoPagina;
+    }
 
     if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
       params.nombre = this.terminoBusqueda.trim();
@@ -100,8 +110,9 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     }
 
     if (this.filtros.fecha_inicio) {
-      params.fecha_inicio = moment(this.filtros.fecha_inicio)
-        .format('YYYY-MM-DD');
+      params.fecha_inicio = moment(this.filtros.fecha_inicio).format(
+        'YYYY-MM-DD'
+      );
     }
 
     if (this.filtros.fecha_fin) {
@@ -187,4 +198,3 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     console.log('Ordenar por:', orden);
   }
 }
-
