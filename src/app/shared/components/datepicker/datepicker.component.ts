@@ -217,6 +217,14 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
     return `${this.meses[this.fechaMostrada.month()]} ${this.fechaMostrada.year()}`;
   }
 
+  limpiarFecha(): void {
+    this.fechaSeleccionada = null;
+    this.edad = null;
+    this.errorMessage = '';
+    this.onChange(null);
+    this.onTouched();
+  }
+
   get fechaFormateada(): string {
     if (!this.fechaSeleccionada) {
       return '';
