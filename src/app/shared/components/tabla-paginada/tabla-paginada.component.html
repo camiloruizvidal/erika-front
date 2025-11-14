@@ -78,13 +78,19 @@
           >
             <td
               *ngFor="let columna of columnas"
-              class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900"
+              [class.whitespace-nowrap]="!columna.renderizarHtml"
+              class="px-6 py-4 text-sm text-neutral-900"
             >
-              <ng-container *ngIf="columna.formatear; else valorSimple">
-                {{ columna.formatear(obtenerValor(item, columna.campo), item) }}
+              <ng-container *ngIf="columna.formatear && columna.renderizarHtml; else formateoSimple">
+                <div [innerHTML]="obtenerHtmlSeguro(columna, item)"></div>
               </ng-container>
-              <ng-template #valorSimple>
-                {{ obtenerValor(item, columna.campo) }}
+              <ng-template #formateoSimple>
+                <ng-container *ngIf="columna.formatear; else valorSimple">
+                  {{ columna.formatear(obtenerValor(item, columna.campo), item) }}
+                </ng-container>
+                <ng-template #valorSimple>
+                  {{ obtenerValor(item, columna.campo) }}
+                </ng-template>
               </ng-template>
             </td>
             <td *ngIf="acciones" class="px-6 py-4 whitespace-nowrap text-sm">

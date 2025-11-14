@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IPaginado } from '../../interfaces/paginado.interface';
 
 export interface IColumnaTabla {
@@ -7,6 +8,7 @@ export interface IColumnaTabla {
   ordenable?: boolean;
   ancho?: string;
   formatear?: (valor: any, item: any) => string;
+  renderizarHtml?: boolean;
 }
 
 @Component({
@@ -16,6 +18,8 @@ export interface IColumnaTabla {
 })
 export class TablaPaginadaComponent {
   Math = Math;
+
+  constructor(private sanitizer: DomSanitizer) {}
 
   @Input() titulo = '';
   @Input() textoBotonCrear = 'Crear nuevo';
@@ -83,6 +87,18 @@ export class TablaPaginadaComponent {
       valor = valor?.[c];
     }
     return valor ?? '';
+  }
+
+  obtenerHtmlSeguro(columna: IColumnaTabla, item: any): SafeHtml | string {
+    if (!columna.formatear) {
+      return this.obtenerValor(item, columna.campo);
+    }
+    const valor = this.obtenerValor(item, columna.campo);
+    const html = columna.formatear(valor, item);
+    if (columna.renderizarHtml) {
+      return this.sanitizer.bypassSecurityTrustHtml(html);
+    }
+    return html;
   }
 
   get paginasDisponibles(): number[] {

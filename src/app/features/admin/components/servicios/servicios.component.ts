@@ -8,6 +8,7 @@ import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { IServicio } from '../paquetes/interfaces/servicio.interface';
 import { IPaquete } from '../paquetes/interfaces/paquete.interface';
+import moment from 'moment';
 
 @Component({
   selector: 'app-servicios',
@@ -43,11 +44,35 @@ export class ServiciosComponent implements OnInit, OnDestroy {
       nombre: 'Paquetes',
       campo: 'paquetes',
       ordenable: false,
-      formatear: (valor: { id: number; nombre: string }[] | undefined) => {
+      renderizarHtml: true,
+      formatear: (valor: any[] | undefined, item: any) => {
         if (!valor || valor.length === 0) {
           return '-';
         }
-        return valor.map((p) => p.nombre).join(', ');
+        return valor
+          .map((paquete: any) => {
+            const colorPunto = paquete.activo ? 'bg-success-500' : 'bg-error-500';
+            const fechaInicio = paquete.fecha_inicio
+              ? moment(paquete.fecha_inicio).format('DD/MM/YYYY')
+              : '-';
+            const fechaFin = paquete.fecha_fin
+              ? moment(paquete.fecha_fin).format('DD/MM/YYYY')
+              : '-';
+            return `
+              <div class="flex items-start gap-2 mb-2 last:mb-0">
+                <span class="w-2 h-2 rounded-full ${colorPunto} mt-2 flex-shrink-0"></span>
+                <div class="flex-1">
+                  <div class="font-medium text-neutral-900">${paquete.nombre}</div>
+                  <div class="text-xs text-neutral-500 mt-1">
+                    <span>Inicio: ${fechaInicio}</span>
+                    <span class="mx-2">•</span>
+                    <span>Fin: ${fechaFin}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
       },
     },
   ];

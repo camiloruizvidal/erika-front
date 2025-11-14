@@ -2,7 +2,14 @@ export interface IServicio {
   id: number;
   nombre: string;
   valor: number;
-  paquetes?: { id: number; nombre: string }[];
+  paquetes?: IPaquete[];
+}
+interface IPaquete {
+  id: number;
+  nombre: string;
+  activo: boolean;
+  fecha_inicio: string;
+  fecha_fin: string | null;
 }
 
 export interface ICrearPaqueteRequest {
