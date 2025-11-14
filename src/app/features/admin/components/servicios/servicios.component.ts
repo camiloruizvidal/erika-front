@@ -50,14 +50,20 @@ export class ServiciosComponent implements OnInit, OnDestroy {
           return '-';
         }
         return valor
-          .map((paquete: any) => {
-            const colorPunto = paquete.activo ? 'bg-success-500' : 'bg-error-500';
+          .map((paquete: any, index: number) => {
+            const colorPunto = paquete.activo
+              ? 'bg-success-500'
+              : 'bg-error-500';
             const fechaInicio = paquete.fecha_inicio
               ? moment(paquete.fecha_inicio).format('DD/MM/YYYY')
               : '-';
             const fechaFin = paquete.fecha_fin
               ? moment(paquete.fecha_fin).format('DD/MM/YYYY')
               : '-';
+            const separador =
+              index < valor.length - 1
+                ? '<div class="border-t border-neutral-200 my-2"></div>'
+                : '';
             return `
               <div class="flex items-start gap-2 mb-2 last:mb-0">
                 <span class="w-2 h-2 rounded-full ${colorPunto} mt-2 flex-shrink-0"></span>
@@ -70,6 +76,7 @@ export class ServiciosComponent implements OnInit, OnDestroy {
                   </div>
                 </div>
               </div>
+              ${separador}
             `;
           })
           .join('');
@@ -97,16 +104,20 @@ export class ServiciosComponent implements OnInit, OnDestroy {
 
   cargarPaquetes(): void {
     this.cargandoPaquetes = true;
-    this.http.get<IPaginado<IPaquete>>(`${environment.apiUrl}/api/v1/packages?pagina=1&tamano_pagina=1000`).subscribe({
-      next: (respuesta) => {
-        this.paquetes = respuesta.data;
-        this.cargandoPaquetes = false;
-      },
-      error: (error) => {
-        console.error('Error al cargar paquetes:', error);
-        this.cargandoPaquetes = false;
-      },
-    });
+    this.http
+      .get<IPaginado<IPaquete>>(
+        `${environment.apiUrl}/api/v1/packages?pagina=1&tamano_pagina=1000`
+      )
+      .subscribe({
+        next: (respuesta) => {
+          this.paquetes = respuesta.data;
+          this.cargandoPaquetes = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar paquetes:', error);
+          this.cargandoPaquetes = false;
+        },
+      });
   }
 
   cargarServicios(): void {
@@ -193,4 +204,3 @@ export class ServiciosComponent implements OnInit, OnDestroy {
     }
   }
 }
-
