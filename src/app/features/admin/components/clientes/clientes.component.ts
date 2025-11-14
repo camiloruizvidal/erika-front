@@ -1,22 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { ColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-
-interface Cliente {
-  id: number;
-  primer_nombre: string;
-  segundo_nombre?: string;
-  primer_apellido: string;
-  segundo_apellido?: string;
-  nombre_completo: string;
-  correo: string;
-  telefono?: string;
-  identificacion?: string;
-  activo: boolean;
-}
+import { Cliente } from './interfaces/cliente.interface';
 
 @Component({
   selector: 'app-clientes',
@@ -43,7 +32,10 @@ export class ClientesComponent implements OnInit {
     }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.cargarClientes();
@@ -78,7 +70,7 @@ export class ClientesComponent implements OnInit {
   }
 
   onCrear(): void {
-    console.log('Crear nuevo cliente');
+    this.router.navigate(['/admin/clientes/crear']);
   }
 
   onBuscar(termino: string): void {

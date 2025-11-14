@@ -1,0 +1,128 @@
+<div class="relative">
+  <label *ngIf="label" class="block text-sm font-medium text-neutral-700 mb-2">
+    {{ label }} <span *ngIf="required" class="text-error-600">*</span>
+  </label>
+
+  <div class="relative">
+    <input
+      type="text"
+      [value]="fechaFormateada"
+      (click)="toggleCalendario()"
+      [placeholder]="placeholder"
+      readonly
+      class="w-full px-4 py-2 pr-10 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none cursor-pointer"
+    />
+    <i class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 pointer-events-none"></i>
+  </div>
+
+  <div *ngIf="errorMessage" class="mt-1 text-sm text-error-600">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="edad !== null" class="mt-1 text-sm text-neutral-600">
+    Edad: {{ edad }} {{ edad === 1 ? 'año' : 'años' }}
+  </div>
+
+  <div
+    *ngIf="mostrarCalendario"
+    #calendarContainer
+    class="absolute z-50 mt-2 bg-white rounded-xl shadow-medium border border-neutral-200 p-4 w-80 left-0"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <button
+        (click)="mesAnterior()"
+        class="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+        [class.invisible]="mostrarSelectorMes || mostrarSelectorAnio"
+      >
+        <i class="fas fa-chevron-left text-neutral-600"></i>
+      </button>
+      
+      <div class="flex items-center space-x-2" *ngIf="!mostrarSelectorMes && !mostrarSelectorAnio">
+        <button
+          (click)="abrirSelectorMes()"
+          class="px-3 py-1 rounded-lg hover:bg-neutral-100 transition-colors text-lg font-semibold text-neutral-900"
+        >
+          {{ meses[fechaMostrada.month()] }}
+        </button>
+        <button
+          (click)="abrirSelectorAnio()"
+          class="px-3 py-1 rounded-lg hover:bg-neutral-100 transition-colors text-lg font-semibold text-neutral-900"
+        >
+          {{ fechaMostrada.year() }}
+        </button>
+      </div>
+
+      <div *ngIf="mostrarSelectorMes" class="flex-1">
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            *ngFor="let mes of meses; let i = index"
+            (click)="seleccionarMes(i)"
+            class="px-3 py-2 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors text-sm font-medium"
+            [class.bg-primary-600]="i === fechaMostrada.month()"
+            [class.text-white]="i === fechaMostrada.month()"
+          >
+            {{ mes }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="mostrarSelectorAnio" class="flex-1 max-h-64 overflow-y-auto">
+        <div class="grid grid-cols-4 gap-2">
+          <button
+            *ngFor="let ano of anosDisponibles"
+            (click)="seleccionarAnio(ano)"
+            [disabled]="esAnioFuturo(ano)"
+            class="px-3 py-2 rounded-lg hover:bg-primary-50 hover:text-primary-700 transition-colors text-sm font-medium disabled:hover:bg-transparent"
+            [class.bg-primary-600]="ano === fechaMostrada.year()"
+            [class.text-white]="ano === fechaMostrada.year()"
+            [class.text-neutral-400]="esAnioFuturo(ano)"
+            [class.cursor-not-allowed]="esAnioFuturo(ano)"
+          >
+            {{ ano }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        (click)="mesSiguiente()"
+        class="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+        [class.invisible]="mostrarSelectorMes || mostrarSelectorAnio"
+      >
+        <i class="fas fa-chevron-right text-neutral-600"></i>
+      </button>
+    </div>
+
+    <div *ngIf="!mostrarSelectorMes && !mostrarSelectorAnio">
+      <div class="grid grid-cols-7 gap-1 mb-2">
+        <div *ngFor="let diaSemana of diasSemana" class="text-center text-xs font-semibold text-neutral-500 py-2">
+          {{ diaSemana }}
+        </div>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1">
+        <div
+          *ngFor="let dia of diasDelMes"
+          class="aspect-square flex items-center justify-center"
+        >
+          <button
+            *ngIf="dia > 0"
+            (click)="seleccionarFecha(obtenerFechaCompleta(dia))"
+            [disabled]="esFutura(obtenerFechaCompleta(dia))"
+            [class.bg-primary-600]="esSeleccionada(obtenerFechaCompleta(dia))"
+            [class.text-white]="esSeleccionada(obtenerFechaCompleta(dia))"
+            [class.border-2]="esHoy(obtenerFechaCompleta(dia)) && !esSeleccionada(obtenerFechaCompleta(dia))"
+            [class.border-primary-600]="esHoy(obtenerFechaCompleta(dia)) && !esSeleccionada(obtenerFechaCompleta(dia))"
+            [class.text-primary-600]="esHoy(obtenerFechaCompleta(dia)) && !esSeleccionada(obtenerFechaCompleta(dia))"
+            [class.text-neutral-400]="esFutura(obtenerFechaCompleta(dia))"
+            [class.cursor-not-allowed]="esFutura(obtenerFechaCompleta(dia))"
+            class="w-full h-full rounded-lg hover:bg-primary-50 transition-colors disabled:hover:bg-transparent font-medium border border-transparent"
+          >
+            {{ dia }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

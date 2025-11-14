@@ -1,0 +1,198 @@
+<div class="max-w-4xl mx-auto">
+  <div class="mb-6">
+    <button
+      (click)="cancelar()"
+      class="inline-flex items-center text-neutral-600 hover:text-neutral-900 mb-4"
+    >
+      <i class="fas fa-arrow-left mr-2"></i>
+      Volver a clientes
+    </button>
+    <h1 class="text-3xl font-bold text-neutral-900">Nuevo Cliente</h1>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-soft p-6">
+    <form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div *ngIf="errorMessage" class="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-lg">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="primer_nombre" class="block text-sm font-medium text-neutral-700 mb-2">
+            Primer Nombre <span class="text-error-600">*</span>
+          </label>
+          <input
+            type="text"
+            id="primer_nombre"
+            formControlName="primer_nombre"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            [class.border-error-500]="primerNombre?.invalid && primerNombre?.touched"
+          />
+          <p *ngIf="primerNombre?.invalid && primerNombre?.touched" class="mt-1 text-sm text-error-600">
+            <span *ngIf="primerNombre?.errors?.['required']">El primer nombre es requerido</span>
+            <span *ngIf="primerNombre?.errors?.['minlength']">Debe tener al menos 2 caracteres</span>
+          </p>
+        </div>
+
+        <div>
+          <label for="segundo_nombre" class="block text-sm font-medium text-neutral-700 mb-2">
+            Segundo Nombre
+          </label>
+          <input
+            type="text"
+            id="segundo_nombre"
+            formControlName="segundo_nombre"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          />
+        </div>
+
+        <div>
+          <label for="primer_apellido" class="block text-sm font-medium text-neutral-700 mb-2">
+            Primer Apellido <span class="text-error-600">*</span>
+          </label>
+          <input
+            type="text"
+            id="primer_apellido"
+            formControlName="primer_apellido"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            [class.border-error-500]="primerApellido?.invalid && primerApellido?.touched"
+          />
+          <p *ngIf="primerApellido?.invalid && primerApellido?.touched" class="mt-1 text-sm text-error-600">
+            <span *ngIf="primerApellido?.errors?.['required']">El primer apellido es requerido</span>
+            <span *ngIf="primerApellido?.errors?.['minlength']">Debe tener al menos 2 caracteres</span>
+          </p>
+        </div>
+
+        <div>
+          <label for="segundo_apellido" class="block text-sm font-medium text-neutral-700 mb-2">
+            Segundo Apellido
+          </label>
+          <input
+            type="text"
+            id="segundo_apellido"
+            formControlName="segundo_apellido"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          />
+        </div>
+
+        <div>
+          <label for="tipo_documento_id" class="block text-sm font-medium text-neutral-700 mb-2">
+            Tipo de Documento <span class="text-error-600">*</span>
+          </label>
+          <select
+            id="tipo_documento_id"
+            formControlName="tipo_documento_id"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            [class.border-error-500]="tipoDocumentoId?.invalid && tipoDocumentoId?.touched"
+          >
+            <option value="">Seleccione un tipo</option>
+            <option *ngFor="let tipo of tiposDocumento" [value]="tipo.id">{{ tipo.nombre }}</option>
+          </select>
+          <p *ngIf="tipoDocumentoId?.invalid && tipoDocumentoId?.touched" class="mt-1 text-sm text-error-600">
+            El tipo de documento es requerido
+          </p>
+        </div>
+
+        <div>
+          <label for="identificacion" class="block text-sm font-medium text-neutral-700 mb-2">
+            Identificación
+          </label>
+          <input
+            type="text"
+            id="identificacion"
+            formControlName="identificacion"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          />
+        </div>
+
+        <div>
+          <label for="correo" class="block text-sm font-medium text-neutral-700 mb-2">
+            Correo Electrónico <span class="text-error-600">*</span>
+          </label>
+          <input
+            type="email"
+            id="correo"
+            formControlName="correo"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+            [class.border-error-500]="correo?.invalid && correo?.touched"
+          />
+          <p *ngIf="correo?.invalid && correo?.touched" class="mt-1 text-sm text-error-600">
+            <span *ngIf="correo?.errors?.['required']">El correo es requerido</span>
+            <span *ngIf="correo?.errors?.['email']">Debe ser un correo válido</span>
+          </p>
+        </div>
+
+        <div>
+          <label for="telefono" class="block text-sm font-medium text-neutral-700 mb-2">
+            Teléfono
+          </label>
+          <input
+            type="tel"
+            id="telefono"
+            formControlName="telefono"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          />
+        </div>
+
+        <div>
+          <app-datepicker
+            label="Fecha de Nacimiento"
+            formControlName="fecha_nacimiento"
+            [maxDate]="fechaMaxima"
+            placeholder="Seleccione la fecha de nacimiento"
+          ></app-datepicker>
+        </div>
+
+        <div>
+          <label for="direccion" class="block text-sm font-medium text-neutral-700 mb-2">
+            Dirección
+          </label>
+          <input
+            type="text"
+            id="direccion"
+            formControlName="direccion"
+            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          />
+        </div>
+      </div>
+
+      <div class="flex items-center pt-4 border-t border-neutral-200">
+        <input
+          type="checkbox"
+          id="activo"
+          formControlName="activo"
+          class="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
+        />
+        <label for="activo" class="ml-2 text-sm text-neutral-700">
+          Cliente activo
+        </label>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4 border-t border-neutral-200">
+        <button
+          type="button"
+          (click)="cancelar()"
+          class="px-6 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="cargando || formulario.invalid"
+          class="px-6 py-2 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="!cargando">
+            <i class="fas fa-save mr-2"></i>
+            Crear Cliente
+          </span>
+          <span *ngIf="cargando">
+            <i class="fas fa-spinner fa-spin mr-2"></i>
+            Creando...
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
