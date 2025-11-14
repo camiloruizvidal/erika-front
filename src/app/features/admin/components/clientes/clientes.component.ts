@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { ColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
@@ -10,46 +11,59 @@ import { Cliente } from './interfaces/cliente.interface';
 @Component({
   selector: 'app-clientes',
   templateUrl: './clientes.component.html',
-  styleUrls: ['./clientes.component.scss']
+  styleUrls: ['./clientes.component.scss'],
 })
-export class ClientesComponent implements OnInit {
+export class ClientesComponent implements OnInit, OnDestroy {
   datos: IPaginado<Cliente> | null = null;
   cargando = false;
   paginaActual = 1;
   tamanoPagina = 10;
   terminoBusqueda = '';
+  private busquedaSubject = new Subject<string>();
+  private busquedaSubscription?: Subscription;
 
   columnas: ColumnaTabla[] = [
-    { nombre: 'Nombre completo', campo: 'nombre_completo', ordenable: true },
-    { nombre: 'Correo', campo: 'correo', ordenable: true },
+    { nombre: 'Nombre completo', campo: 'nombre_completo', ordenable: false },
+    { nombre: 'Correo', campo: 'correo', ordenable: false },
     { nombre: 'Teléfono', campo: 'telefono', ordenable: false },
     { nombre: 'Identificación', campo: 'identificacion', ordenable: false },
     {
       nombre: 'Estado',
       campo: 'activo',
-      ordenable: true,
-      formatear: (valor: boolean) => valor ? 'Activo' : 'Inactivo'
-    }
+      ordenable: false,
+      formatear: (valor: boolean) => (valor ? 'Activo' : 'Inactivo'),
+    },
   ];
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
+    this.busquedaSubscription = this.busquedaSubject
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe((termino) => {
+        this.terminoBusqueda = termino;
+        this.paginaActual = 1;
+        this.cargarClientes();
+      });
     this.cargarClientes();
+  }
+
+  ngOnDestroy(): void {
+    this.busquedaSubscription?.unsubscribe();
   }
 
   cargarClientes(): void {
     this.cargando = true;
     const params: any = {
       pagina: this.paginaActual,
-      tamano_pagina: this.tamanoPagina
+      tamano_pagina: this.tamanoPagina,
     };
 
-    if (this.terminoBusqueda) {
-      params.busqueda = this.terminoBusqueda;
+    if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
+      params.filtro = this.terminoBusqueda.trim();
     }
 
     this.obtenerClientes(params).subscribe({
@@ -60,13 +74,15 @@ export class ClientesComponent implements OnInit {
       error: (error) => {
         console.error('Error al cargar clientes:', error);
         this.cargando = false;
-      }
+      },
     });
   }
 
   obtenerClientes(params: any): Observable<IPaginado<Cliente>> {
     const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<Cliente>>(`${environment.apiUrl}/api/v1/customers?${queryString}`);
+    return this.http.get<IPaginado<Cliente>>(
+      `${environment.apiUrl}/api/v1/customers?${queryString}`
+    );
   }
 
   onCrear(): void {
@@ -74,7 +90,11 @@ export class ClientesComponent implements OnInit {
   }
 
   onBuscar(termino: string): void {
-    this.terminoBusqueda = termino;
+    this.busquedaSubject.next(termino);
+  }
+
+  onLimpiarBusqueda(): void {
+    this.terminoBusqueda = '';
     this.paginaActual = 1;
     this.cargarClientes();
   }

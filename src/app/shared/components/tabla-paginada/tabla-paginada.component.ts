@@ -30,6 +30,7 @@ export class TablaPaginadaComponent {
 
   @Output() crear = new EventEmitter<void>();
   @Output() buscar = new EventEmitter<string>();
+  @Output() limpiarBusqueda = new EventEmitter<void>();
   @Output() cambiarPagina = new EventEmitter<number>();
   @Output() cambiarTamanoPagina = new EventEmitter<number>();
   @Output() filaClick = new EventEmitter<any>();
@@ -40,8 +41,13 @@ export class TablaPaginadaComponent {
   campoOrden: string | null = null;
   direccionOrden: 'asc' | 'desc' = 'asc';
 
-  onBuscar(): void {
+  onInputChange(): void {
     this.buscar.emit(this.terminoBusqueda);
+  }
+
+  onLimpiar(): void {
+    this.terminoBusqueda = '';
+    this.limpiarBusqueda.emit();
   }
 
   onCambiarPagina(pagina: number): void {

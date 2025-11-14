@@ -11,23 +11,22 @@
   </div>
 
   <div *ngIf="mostrarBusqueda" class="bg-white rounded-xl shadow-soft p-4">
-    <div class="flex gap-3">
-      <div class="flex-1 relative">
-        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
-        <input
-          type="text"
-          [(ngModel)]="terminoBusqueda"
-          (keyup.enter)="onBuscar()"
-          [placeholder]="placeholderBusqueda"
-          class="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
-        />
-      </div>
+    <div class="flex-1 relative">
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
+      <input
+        type="text"
+        [(ngModel)]="terminoBusqueda"
+        (input)="onInputChange()"
+        [placeholder]="placeholderBusqueda"
+        class="w-full pl-10 pr-10 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+      />
       <button
-        (click)="onBuscar()"
-        class="px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+        *ngIf="terminoBusqueda"
+        (click)="onLimpiar()"
+        type="button"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
       >
-        <i class="fas fa-search mr-2"></i>
-        Buscar
+        <i class="fas fa-times"></i>
       </button>
     </div>
   </div>

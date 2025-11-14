@@ -4,7 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import moment from 'moment';
 import { environment } from '../../../../../../environments/environment';
-import { TipoDocumento, CrearClienteRequest } from '../interfaces/cliente.interface';
+import {
+  TipoDocumento,
+  CrearClienteRequest,
+} from '../interfaces/cliente.interface';
+import { NotificationService } from '../../../../../shared/services/notification.service';
+import { TIPOS_DOCUMENTO } from '../../../../../shared/constants/tipos-documento.constant';
 
 @Component({
   selector: 'app-crear-cliente',
@@ -21,7 +26,8 @@ export class CrearClienteComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -46,18 +52,7 @@ export class CrearClienteComponent implements OnInit {
   }
 
   cargarTiposDocumento(): void {
-    this.tiposDocumento = [
-      { id: 1, nombre: 'Cédula' },
-      { id: 2, nombre: 'Tarjeta' },
-      { id: 3, nombre: 'Registro Civil' },
-      { id: 4, nombre: 'Cédula Ext.' },
-      { id: 5, nombre: 'Pasaporte' },
-      { id: 6, nombre: 'Permiso PPT' },
-      { id: 7, nombre: 'Permiso PEP' },
-      { id: 8, nombre: 'NIT PN' },
-      { id: 9, nombre: 'DNI' },
-      { id: 10, nombre: 'NUIP' },
-    ];
+    this.tiposDocumento = TIPOS_DOCUMENTO;
   }
 
   onSubmit(): void {
@@ -94,7 +89,10 @@ export class CrearClienteComponent implements OnInit {
     }
 
     if (this.formulario.value.fecha_nacimiento) {
-      const fechaMoment = moment(this.formulario.value.fecha_nacimiento, 'YYYY-MM-DD');
+      const fechaMoment = moment(
+        this.formulario.value.fecha_nacimiento,
+        'YYYY-MM-DD'
+      );
       datos.fecha_nacimiento = fechaMoment.format('YYYY-MM-DD');
     }
 
@@ -105,13 +103,18 @@ export class CrearClienteComponent implements OnInit {
     this.http.post(`${environment.apiUrl}/api/v1/customers`, datos).subscribe({
       next: () => {
         this.cargando = false;
-        this.router.navigate(['/admin/clientes']);
+        this.notificationService
+          .exito('Cliente registrado exitosamente')
+          .then(() => {
+            this.router.navigate(['/admin/clientes']);
+          });
       },
       error: (error) => {
         this.cargando = false;
-        this.errorMessage =
+        const mensajeError =
           error.error?.message ||
           'Error al crear el cliente. Verifica los datos e intenta nuevamente.';
+        this.notificationService.error('Error al crear cliente', mensajeError);
       },
     });
   }
@@ -143,4 +146,3 @@ export class CrearClienteComponent implements OnInit {
     return this.formulario.get('correo');
   }
 }
-
