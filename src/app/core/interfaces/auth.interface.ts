@@ -1,12 +1,8 @@
-/**
- * Interfaces para autenticación
- */
-export interface LoginRequest {
+export interface ILoginRequest {
   correo_contacto: string;
   contrasena: string;
 }
 
-export interface LoginResponse {
+export interface ILoginResponse {
   token: string;
 }
-

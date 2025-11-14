@@ -1,6 +1,6 @@
-import { TipoDocumento } from '../../features/admin/components/clientes/interfaces/cliente.interface';
+import { ITipoDocumento } from '../../features/admin/components/clientes/interfaces/cliente.interface';
 
-export const TIPOS_DOCUMENTO: TipoDocumento[] = [
+export const TIPOS_DOCUMENTO: ITipoDocumento[] = [
   { id: 1, nombre: 'Cédula' },
   { id: 2, nombre: 'Tarjeta' },
   { id: 3, nombre: 'Registro Civil' },

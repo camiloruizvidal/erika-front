@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StorageService } from '../../shared/services/storage.service';
 import { STORAGE_KEYS } from '../constants/storage-keys.constant';
-import { LoginRequest, LoginResponse } from '../interfaces/auth.interface';
+import { ILoginRequest, ILoginResponse } from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,8 @@ export class AuthService {
     private storageService: StorageService
   ) {}
 
-  login(credenciales: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credenciales)
+  login(credenciales: ILoginRequest): Observable<ILoginResponse> {
+    return this.http.post<ILoginResponse>(`${this.apiUrl}/login`, credenciales)
       .pipe(
         tap(response => {
           if (response.token) {

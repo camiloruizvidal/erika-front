@@ -88,14 +88,14 @@
               </ng-template>
             </td>
             <td *ngIf="acciones" class="px-6 py-4 whitespace-nowrap text-sm">
-              <div class="relative" (click)="$event.stopPropagation()">
+              <div class="relative inline-block" (click)="$event.stopPropagation()">
                 <select
                   #selectAccion
                   (change)="onAccionSeleccionada(item, $any($event.target).value); selectAccion.value = ''"
                   (click)="$event.stopPropagation()"
-                  class="appearance-none bg-white border border-neutral-300 rounded-lg px-3 py-1.5 pr-8 text-sm text-neutral-700 hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent cursor-pointer"
+                  class="appearance-none bg-white border border-neutral-300 rounded-lg px-3 py-1.5 pr-8 text-sm text-neutral-700 hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent cursor-pointer min-w-[120px]"
                 >
-                  <option value="">Acciones</option>
+                  <option value="" disabled selected>Acciones</option>
                   <option value="pagos">Pagos</option>
                   <option value="servicios">Servicios</option>
                 </select>

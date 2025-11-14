@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import moment from 'moment';
 import { environment } from '../../../../../../environments/environment';
 import {
-  TipoDocumento,
-  CrearClienteRequest,
+  ITipoDocumento,
+  ICrearClienteRequest,
 } from '../interfaces/cliente.interface';
 import { NotificationService } from '../../../../../shared/services/notification.service';
 import { TIPOS_DOCUMENTO } from '../../../../../shared/constants/tipos-documento.constant';
@@ -18,7 +18,7 @@ import { TIPOS_DOCUMENTO } from '../../../../../shared/constants/tipos-documento
 })
 export class CrearClienteComponent implements OnInit {
   formulario!: FormGroup;
-  tiposDocumento: TipoDocumento[] = [];
+  tiposDocumento: ITipoDocumento[] = [];
   cargando = false;
   errorMessage = '';
   fechaMaxima = new Date();
@@ -64,7 +64,7 @@ export class CrearClienteComponent implements OnInit {
     this.cargando = true;
     this.errorMessage = '';
 
-    const datos: CrearClienteRequest = {
+    const datos: ICrearClienteRequest = {
       primer_nombre: this.formulario.value.primer_nombre.trim(),
       primer_apellido: this.formulario.value.primer_apellido.trim(),
       tipo_documento_id: Number(this.formulario.value.tipo_documento_id),

@@ -8,6 +8,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ClientesComponent } from './components/clientes/clientes.component';
 import { CrearClienteComponent } from './components/clientes/crear-cliente/crear-cliente.component';
 import { PaquetesComponent } from './components/paquetes/paquetes.component';
+import { DetallePaqueteComponent } from './components/paquetes/detalle-paquete/detalle-paquete.component';
+import { CrearPaqueteComponent } from './components/paquetes/crear-paquete/crear-paquete.component';
+import { ServiciosComponent } from './components/servicios/servicios.component';
 import { SharedModule } from '../../shared/shared.module';
 
 const routes: Routes = [
@@ -35,6 +38,18 @@ const routes: Routes = [
       {
         path: 'paquetes',
         component: PaquetesComponent
+      },
+      {
+        path: 'paquetes/crear',
+        component: CrearPaqueteComponent
+      },
+      {
+        path: 'paquetes/:id',
+        component: DetallePaqueteComponent
+      },
+      {
+        path: 'servicios',
+        component: ServiciosComponent
       }
     ]
   }
@@ -46,7 +61,10 @@ const routes: Routes = [
     DashboardComponent,
     ClientesComponent,
     CrearClienteComponent,
-    PaquetesComponent
+    PaquetesComponent,
+    DetallePaqueteComponent,
+    CrearPaqueteComponent,
+    ServiciosComponent
   ],
   imports: [
     CommonModule,

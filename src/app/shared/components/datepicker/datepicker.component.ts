@@ -66,8 +66,9 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   generarAnosDisponibles(): void {
     const anoActual = moment().year();
     const anoInicio = anoActual - 120;
+    const anoFin = this.maxDate ? moment(this.maxDate).year() : anoActual + 50;
     this.anosDisponibles = [];
-    for (let ano = anoActual; ano >= anoInicio; ano--) {
+    for (let ano = anoFin; ano >= anoInicio; ano--) {
       this.anosDisponibles.push(ano);
     }
   }
@@ -110,12 +111,14 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   }
 
   seleccionarFecha(fecha: moment.Moment): void {
-    const hoy = moment().startOf('day');
-    const fechaSeleccionada = fecha.startOf('day');
+    if (this.maxDate) {
+      const maxDateMoment = moment(this.maxDate).startOf('day');
+      const fechaSeleccionada = fecha.startOf('day');
 
-    if (fechaSeleccionada.isAfter(hoy)) {
-      this.errorMessage = 'La fecha no puede ser futura';
-      return;
+      if (fechaSeleccionada.isAfter(maxDateMoment)) {
+        this.errorMessage = 'La fecha no puede ser posterior a la fecha máxima';
+        return;
+      }
     }
 
     this.errorMessage = '';
@@ -139,7 +142,14 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   }
 
   mesSiguiente(): void {
-    this.fechaMostrada = moment(this.fechaMostrada).add(1, 'month');
+    const nuevoMes = moment(this.fechaMostrada).add(1, 'month');
+    if (this.maxDate) {
+      const maxDateMoment = moment(this.maxDate);
+      if (nuevoMes.isAfter(maxDateMoment, 'month')) {
+        return;
+      }
+    }
+    this.fechaMostrada = nuevoMes;
     this.generarDiasDelMes();
   }
 
@@ -160,11 +170,15 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   }
 
   seleccionarAnio(ano: number): void {
-    const hoy = moment();
     const nuevaFecha = moment(this.fechaMostrada).year(ano);
     
-    if (nuevaFecha.isAfter(hoy, 'day')) {
-      this.fechaMostrada = hoy;
+    if (this.maxDate) {
+      const maxDateMoment = moment(this.maxDate);
+      if (nuevaFecha.isAfter(maxDateMoment, 'day')) {
+        this.fechaMostrada = maxDateMoment;
+      } else {
+        this.fechaMostrada = nuevaFecha;
+      }
     } else {
       this.fechaMostrada = nuevaFecha;
     }
@@ -173,7 +187,9 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   }
 
   esAnioFuturo(ano: number): boolean {
-    return moment().year(ano).startOf('year').isAfter(moment(), 'day');
+    if (!this.maxDate) return false;
+    const maxDateMoment = moment(this.maxDate);
+    return moment().year(ano).startOf('year').isAfter(maxDateMoment, 'day');
   }
 
   generarDiasDelMes(): void {
@@ -205,8 +221,9 @@ export class DatepickerComponent implements OnInit, ControlValueAccessor {
   }
 
   esFutura(fecha: moment.Moment): boolean {
-    const hoy = moment().startOf('day');
-    return fecha.startOf('day').isAfter(hoy);
+    if (!this.maxDate) return false;
+    const maxDateMoment = moment(this.maxDate).startOf('day');
+    return fecha.startOf('day').isAfter(maxDateMoment);
   }
 
   obtenerFechaCompleta(dia: number): moment.Moment {

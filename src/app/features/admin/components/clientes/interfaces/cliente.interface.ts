@@ -1,4 +1,4 @@
-export interface Cliente {
+export interface ICliente {
   id: number;
   primer_nombre: string;
   segundo_nombre?: string;
@@ -11,12 +11,12 @@ export interface Cliente {
   activo: boolean;
 }
 
-export interface TipoDocumento {
+export interface ITipoDocumento {
   id: number;
   nombre: string;
 }
 
-export interface CrearClienteRequest {
+export interface ICrearClienteRequest {
   primer_nombre: string;
   segundo_nombre?: string;
   primer_apellido: string;

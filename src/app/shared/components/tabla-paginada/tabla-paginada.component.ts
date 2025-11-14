@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IPaginado } from '../../interfaces/paginado.interface';
 
-export interface ColumnaTabla {
+export interface IColumnaTabla {
   nombre: string;
   campo: string;
   ordenable?: boolean;
@@ -23,7 +23,7 @@ export class TablaPaginadaComponent {
   @Input() placeholderBusqueda = 'Buscar...';
   @Input() datos: IPaginado<any> | null = null;
   @Input() cargando = false;
-  @Input() columnas: ColumnaTabla[] = [];
+  @Input() columnas: IColumnaTabla[] = [];
   @Input() mostrarBusqueda = true;
   @Input() mostrarPaginacion = true;
   @Input() acciones: boolean = false;

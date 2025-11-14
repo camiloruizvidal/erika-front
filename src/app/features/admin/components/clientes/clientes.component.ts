@@ -5,8 +5,8 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
-import { ColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-import { Cliente } from './interfaces/cliente.interface';
+import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { ICliente } from './interfaces/cliente.interface';
 
 @Component({
   selector: 'app-clientes',
@@ -14,7 +14,7 @@ import { Cliente } from './interfaces/cliente.interface';
   styleUrls: ['./clientes.component.scss'],
 })
 export class ClientesComponent implements OnInit, OnDestroy {
-  datos: IPaginado<Cliente> | null = null;
+  datos: IPaginado<ICliente> | null = null;
   cargando = false;
   paginaActual = 1;
   tamanoPagina = 10;
@@ -22,7 +22,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
 
-  columnas: ColumnaTabla[] = [
+  columnas: IColumnaTabla[] = [
     { nombre: 'Nombre completo', campo: 'nombre_completo', ordenable: false },
     { nombre: 'Correo', campo: 'correo', ordenable: false },
     { nombre: 'Teléfono', campo: 'telefono', ordenable: false },
@@ -75,9 +75,9 @@ export class ClientesComponent implements OnInit, OnDestroy {
     });
   }
 
-  obtenerClientes(params: any): Observable<IPaginado<Cliente>> {
+  obtenerClientes(params: any): Observable<IPaginado<ICliente>> {
     const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<Cliente>>(
+    return this.http.get<IPaginado<ICliente>>(
       `${environment.apiUrl}/api/v1/customers?${queryString}`
     );
   }
@@ -107,7 +107,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
     this.cargarClientes();
   }
 
-  onFilaClick(cliente: Cliente): void {
+  onFilaClick(cliente: ICliente): void {
     console.log('Click en cliente:', cliente);
   }
 
@@ -115,7 +115,7 @@ export class ClientesComponent implements OnInit, OnDestroy {
     console.log('Ordenar por:', orden);
   }
 
-  onAccionSeleccionada(evento: { item: Cliente; accion: string }): void {
+  onAccionSeleccionada(evento: { item: ICliente; accion: string }): void {
     const { item, accion } = evento;
     if (accion === 'pagos') {
       console.log('Ver pagos de cliente:', item);

@@ -5,8 +5,8 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
-import { ColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
-import { Paquete, FiltrosPaquete } from './interfaces/paquete.interface';
+import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
+import { IPaquete, IFiltrosPaquete } from './interfaces/paquete.interface';
 import moment from 'moment';
 
 @Component({
@@ -15,12 +15,12 @@ import moment from 'moment';
   styleUrls: ['./paquetes.component.scss'],
 })
 export class PaquetesComponent implements OnInit, OnDestroy {
-  datos: IPaginado<Paquete> | null = null;
+  datos: IPaginado<IPaquete> | null = null;
   cargando = false;
   paginaActual = 1;
   tamanoPagina = 10;
   terminoBusqueda = '';
-  filtros: FiltrosPaquete = {};
+  filtros: IFiltrosPaquete = {};
   mostrarFiltros = false;
   fechaMaxima = new Date();
   fechaInicioFiltro: string | null = null;
@@ -28,7 +28,7 @@ export class PaquetesComponent implements OnInit, OnDestroy {
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
 
-  columnas: ColumnaTabla[] = [
+  columnas: IColumnaTabla[] = [
     { nombre: 'Nombre', campo: 'nombre', ordenable: false },
     {
       nombre: 'Valor',
@@ -118,9 +118,9 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     });
   }
 
-  obtenerPaquetes(params: any): Observable<IPaginado<Paquete>> {
+  obtenerPaquetes(params: any): Observable<IPaginado<IPaquete>> {
     const queryString = new URLSearchParams(params).toString();
-    return this.http.get<IPaginado<Paquete>>(
+    return this.http.get<IPaginado<IPaquete>>(
       `${environment.apiUrl}/api/v1/packages?${queryString}`
     );
   }
@@ -139,7 +139,7 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     this.cargarPaquetes();
   }
 
-  onAplicarFiltros(filtros: FiltrosPaquete): void {
+  onAplicarFiltros(filtros: IFiltrosPaquete): void {
     this.filtros = { ...filtros };
     this.paginaActual = 1;
     this.cargarPaquetes();
@@ -184,8 +184,8 @@ export class PaquetesComponent implements OnInit, OnDestroy {
     this.cargarPaquetes();
   }
 
-  onFilaClick(paquete: Paquete): void {
-    console.log('Click en paquete:', paquete);
+  onFilaClick(paquete: IPaquete): void {
+    this.router.navigate(['/admin/paquetes', paquete.id]);
   }
 
   onOrdenar(orden: { campo: string; direccion: 'asc' | 'desc' }): void {
