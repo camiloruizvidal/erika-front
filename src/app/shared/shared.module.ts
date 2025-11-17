@@ -5,13 +5,15 @@ import { ListadoBaseComponent } from './components/listado-base/listado-base.com
 import { TablaPaginadaComponent } from './components/tabla-paginada/tabla-paginada.component';
 import { DatepickerComponent } from './components/datepicker/datepicker.component';
 import { PaquetesListaComponent } from './components/paquetes-lista/paquetes-lista.component';
+import { CurrencyInputComponent } from './components/currency-input/currency-input.component';
 
 @NgModule({
   declarations: [
     ListadoBaseComponent,
     TablaPaginadaComponent,
     DatepickerComponent,
-    PaquetesListaComponent
+    PaquetesListaComponent,
+    CurrencyInputComponent
   ],
   imports: [
     CommonModule,
@@ -22,7 +24,8 @@ import { PaquetesListaComponent } from './components/paquetes-lista/paquetes-lis
     ListadoBaseComponent,
     TablaPaginadaComponent,
     DatepickerComponent,
-    PaquetesListaComponent
+    PaquetesListaComponent,
+    CurrencyInputComponent
   ]
 })
 export class SharedModule { }

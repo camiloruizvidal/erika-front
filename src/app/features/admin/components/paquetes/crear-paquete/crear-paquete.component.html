@@ -1,19 +1,14 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <h1 class="text-3xl font-bold text-neutral-900">Crear Paquete</h1>
-    <button
-      (click)="cancelar()"
-      class="inline-flex items-center px-4 py-2 text-neutral-700 hover:text-neutral-900 transition-colors"
-    >
-      <i class="fas fa-times mr-2"></i>
-      Cancelar
-    </button>
   </div>
 
   <div class="bg-white rounded-xl shadow-soft p-6">
-    <h2 class="text-xl font-bold text-neutral-900 mb-6">Información del Paquete</h2>
+    <h2 class="text-xl font-bold text-neutral-900 mb-6">
+      Información del Paquete
+    </h2>
     <form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-neutral-700 mb-2">
             Nombre del paquete <span class="text-error-600">*</span>
@@ -25,73 +20,151 @@
             placeholder="Ej: Paquete Premium"
           />
           <p
-            *ngIf="formulario.get('nombre')?.invalid && formulario.get('nombre')?.touched"
+            *ngIf="
+              formulario.get('nombre')?.invalid &&
+              formulario.get('nombre')?.touched
+            "
             class="mt-1 text-sm text-error-600"
           >
             El nombre es requerido y debe tener al menos 2 caracteres
           </p>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-neutral-700 mb-2">
-            Valor del paquete <span class="text-error-600">*</span>
-          </label>
-          <input
-            type="number"
-            formControlName="valor"
-            min="0"
-            step="0.01"
-            class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="0"
-          />
-          <p class="text-xs text-neutral-500 mt-1">
-            Calculado automáticamente: {{ formatearValor(calcularValorTotal()) }}
-          </p>
-          <p
-            *ngIf="formulario.get('valor')?.invalid && formulario.get('valor')?.touched"
-            class="mt-1 text-sm text-error-600"
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <app-currency-input
+              label="Valor del paquete"
+              [required]="true"
+              formControlName="valor"
+              placeholder="0"
+            ></app-currency-input>
+            <p class="text-xs text-neutral-500 mt-1">
+              Suma de servicios:
+              {{ formatearValor(calcularValorTotal()) }}
+            </p>
+            <p
+              *ngIf="obtenerDiferenciaValor().mensaje"
+              [class]="
+                obtenerDiferenciaValor().tipo === 'mayor'
+                  ? 'text-xs text-error-600 mt-1'
+                  : obtenerDiferenciaValor().tipo === 'menor'
+                  ? 'text-xs text-success-600 mt-1'
+                  : 'text-xs text-neutral-500 mt-1'
+              "
+            >
+              {{ obtenerDiferenciaValor().mensaje }}
+            </p>
+            <p
+              *ngIf="
+                formulario.get('valor')?.invalid &&
+                formulario.get('valor')?.touched
+              "
+              class="mt-1 text-sm text-error-600"
+            >
+              El valor es requerido y debe ser mayor o igual a 0
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-2">
+              Tipo de Frecuencia <span class="text-error-600">*</span>
+            </label>
+            <select
+              formControlName="frecuencia_tipo"
+              class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            >
+              <option [value]="EFrecuenciaTipo.MENSUAL">Mensual</option>
+              <option [value]="EFrecuenciaTipo.SEMANAS">Por Semanas</option>
+              <option [value]="EFrecuenciaTipo.SERVICIOS">Por Servicios</option>
+              <option [value]="EFrecuenciaTipo.ANUAL">Anual</option>
+            </select>
+            <p
+              *ngIf="
+                formulario.get('frecuencia_tipo')?.invalid &&
+                formulario.get('frecuencia_tipo')?.touched
+              "
+              class="mt-1 text-sm text-error-600"
+            >
+              El tipo de frecuencia es requerido
+            </p>
+          </div>
+
+          <div
+            *ngIf="
+              formulario.get('frecuencia_tipo')?.value ===
+                EFrecuenciaTipo.SEMANAS ||
+              formulario.get('frecuencia_tipo')?.value ===
+                EFrecuenciaTipo.SERVICIOS
+            "
           >
-            El valor es requerido y debe ser mayor o igual a 0
-          </p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-neutral-700 mb-2">
-            Fecha de inicio <span class="text-error-600">*</span>
-          </label>
-          <app-datepicker
-            formControlName="fecha_inicio"
-            placeholder="Seleccione la fecha de inicio"
-            (ngModelChange)="onFechaInicioChange($event)"
-          ></app-datepicker>
-          <p
-            *ngIf="formulario.get('fecha_inicio')?.invalid && formulario.get('fecha_inicio')?.touched"
-            class="mt-1 text-sm text-error-600"
-          >
-            La fecha de inicio es requerida
-          </p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-neutral-700 mb-2">
-            Fecha de fin
-          </label>
-          <app-datepicker
-            formControlName="fecha_fin"
-            placeholder="Seleccione la fecha de fin (opcional)"
-            (ngModelChange)="onFechaFinChange($event)"
-          ></app-datepicker>
-        </div>
-
-        <div>
-          <label class="flex items-center gap-2">
+            <label class="block text-sm font-medium text-neutral-700 mb-2">
+              {{
+                formulario.get("frecuencia_tipo")?.value ===
+                EFrecuenciaTipo.SEMANAS
+                  ? "Cada Cuántas Semanas"
+                  : "Cada Cuántos Servicios"
+              }}
+              <span class="text-error-600">*</span>
+            </label>
             <input
-              type="checkbox"
-              formControlName="activo"
-              class="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
+              type="number"
+              formControlName="frecuencia_valor"
+              min="1"
+              class="w-full px-4 py-2 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              placeholder="Ej: 4"
             />
-            <span class="text-sm font-medium text-neutral-700">Paquete activo</span>
-          </label>
+            <p
+              *ngIf="
+                formulario.get('frecuencia_valor')?.invalid &&
+                formulario.get('frecuencia_valor')?.touched
+              "
+              class="mt-1 text-sm text-error-600"
+            >
+              El valor de frecuencia es requerido y debe ser mayor a 0
+            </p>
+            <p
+              *ngIf="
+                formulario.get('frecuencia_tipo')?.value ===
+                  EFrecuenciaTipo.SEMANAS && obtenerTextoFrecuenciaSemanas()
+              "
+              class="mt-1 text-sm text-primary-600"
+            >
+              {{ obtenerTextoFrecuenciaSemanas() }}
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-2">
+              Fecha de inicio <span class="text-error-600">*</span>
+            </label>
+            <app-datepicker
+              formControlName="fecha_inicio"
+              placeholder="Seleccione la fecha de inicio"
+              (ngModelChange)="onFechaInicioChange($event)"
+            ></app-datepicker>
+            <p
+              *ngIf="
+                formulario.get('fecha_inicio')?.invalid &&
+                formulario.get('fecha_inicio')?.touched
+              "
+              class="mt-1 text-sm text-error-600"
+            >
+              La fecha de inicio es requerida
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-neutral-700 mb-2">
+              Fecha de fin
+            </label>
+            <app-datepicker
+              formControlName="fecha_fin"
+              placeholder="Seleccione la fecha de fin (opcional)"
+              (ngModelChange)="onFechaFinChange($event)"
+            ></app-datepicker>
+          </div>
         </div>
       </div>
 
@@ -99,33 +172,38 @@
         <h3 class="text-lg font-bold text-neutral-900 mb-4">
           Servicios seleccionados: {{ serviciosSeleccionados.size }}
         </h3>
-        <div class="flex gap-4">
+        <div class="flex items-center gap-4">
           <button
             type="submit"
             [disabled]="cargando || serviciosSeleccionados.size === 0"
             class="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <i class="fas fa-save mr-2"></i>
-            {{ cargando ? 'Guardando...' : 'Crear Paquete' }}
+            {{ cargando ? "Guardando..." : "Crear Paquete" }}
           </button>
-          <button
-            type="button"
-            (click)="cancelar()"
-            class="inline-flex items-center px-6 py-3 bg-neutral-200 text-neutral-700 rounded-xl font-semibold hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 transition-colors"
-          >
-            Cancelar
-          </button>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              formControlName="activo"
+              class="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500"
+            />
+            <span class="text-sm font-medium text-neutral-700">Activo</span>
+          </label>
         </div>
       </div>
     </form>
   </div>
 
   <div class="bg-white rounded-xl shadow-soft p-6">
-    <h2 class="text-xl font-bold text-neutral-900 mb-6">Seleccionar Servicios</h2>
+    <h2 class="text-xl font-bold text-neutral-900 mb-6">
+      Seleccionar Servicios
+    </h2>
 
     <div class="bg-white rounded-xl shadow-soft p-4 mb-6">
       <div class="flex-1 relative mb-4">
-        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
+        <i
+          class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
+        ></i>
         <input
           type="text"
           [(ngModel)]="terminoBusqueda"
@@ -142,7 +220,6 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-
     </div>
 
     <div class="bg-white rounded-xl shadow-soft overflow-hidden">
@@ -151,19 +228,30 @@
         <p class="text-neutral-600">Cargando...</p>
       </div>
 
-      <div *ngIf="!cargandoServicios && servicios && servicios.data.length === 0" class="p-8 text-center">
+      <div
+        *ngIf="!cargandoServicios && servicios && servicios.data.length === 0"
+        class="p-8 text-center"
+      >
         <i class="fas fa-inbox text-4xl text-neutral-400 mb-4"></i>
         <p class="text-neutral-600">No se encontraron resultados</p>
       </div>
 
-      <div *ngIf="!cargandoServicios && servicios && servicios.data.length > 0" class="overflow-x-auto">
+      <div
+        *ngIf="!cargandoServicios && servicios && servicios.data.length > 0"
+        class="overflow-x-auto"
+      >
         <table class="w-full">
           <thead class="bg-neutral-50 border-b border-neutral-200">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider w-12">
+              <th
+                class="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider w-12"
+              >
                 <input
                   type="checkbox"
-                  [checked]="serviciosSeleccionados.size === servicios.data.length && servicios.data.length > 0"
+                  [checked]="
+                    serviciosSeleccionados.size === servicios.data.length &&
+                    servicios.data.length > 0
+                  "
                   (change)="toggleTodosServicios()"
                   class="w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500 cursor-pointer"
                 />
@@ -177,8 +265,14 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-neutral-200">
-            <tr *ngFor="let servicio of servicios.data" class="hover:bg-neutral-50 cursor-pointer transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap" (click)="$event.stopPropagation()">
+            <tr
+              *ngFor="let servicio of servicios.data"
+              class="hover:bg-neutral-50 cursor-pointer transition-colors"
+            >
+              <td
+                class="px-6 py-4 whitespace-nowrap"
+                (click)="$event.stopPropagation()"
+              >
                 <input
                   type="checkbox"
                   [checked]="estaSeleccionado(servicio.id)"
@@ -191,7 +285,12 @@
                 class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900"
               >
                 <ng-container *ngIf="columna.formatear; else valorSimple">
-                  {{ columna.formatear(obtenerValor(servicio, columna.campo), servicio) }}
+                  {{
+                    columna.formatear(
+                      obtenerValor(servicio, columna.campo),
+                      servicio
+                    )
+                  }}
                 </ng-container>
                 <ng-template #valorSimple>
                   {{ obtenerValor(servicio, columna.campo) }}
@@ -219,4 +318,3 @@
     ></app-tabla-paginada>
   </div>
 </div>
-

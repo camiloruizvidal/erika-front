@@ -14,6 +14,10 @@ import {
 } from '../../paquetes/interfaces/paquete.interface';
 import { IColumnaTabla } from '../../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { NotificationService } from '../../../../../shared/services/notification.service';
+import {
+  EFrecuenciaTipo,
+  FrecuenciaTipo,
+} from '../../../../../shared/enums/frecuencia-tipo.enum';
 import moment from 'moment';
 import 'moment/locale/es';
 
@@ -38,9 +42,12 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
   mostrarModalAsignacion = false;
   paqueteSeleccionado: IPaqueteDetalle | null = null;
   valorAcordado: number = 0;
+  diaCobro: number = 1;
+  frecuenciaValor: number = 1;
   cargandoDetallePaquete = false;
   asignandoPaquete = false;
   errorAsignacion: string | null = null;
+  EFrecuenciaTipo = EFrecuenciaTipo;
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
 
@@ -248,6 +255,8 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
       next: (detalle) => {
         this.paqueteSeleccionado = detalle;
         this.valorAcordado = detalle.valor;
+        this.diaCobro = 1;
+        this.frecuenciaValor = detalle.frecuencia_valor || 1;
         this.cargandoDetallePaquete = false;
       },
       error: (error) => {
@@ -262,6 +271,8 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
     this.mostrarModalAsignacion = false;
     this.paqueteSeleccionado = null;
     this.valorAcordado = 0;
+    this.diaCobro = 1;
+    this.frecuenciaValor = 1;
     this.errorAsignacion = null;
   }
 
@@ -272,13 +283,21 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
 
     const serviciosIds = this.paqueteSeleccionado.servicios.map((s) => s.id);
 
-    const datos = {
+    const datos: any = {
       paquete_id: this.paqueteSeleccionado.id,
       valor_paquete: this.valorAcordado,
-      frecuencia_tipo: 'mensual',
-      dia_cobro: 1,
+      frecuencia_tipo: this.paqueteSeleccionado.frecuencia_tipo,
       servicios: serviciosIds,
     };
+
+    if (this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.MENSUAL) {
+      datos.dia_cobro = this.diaCobro;
+    } else if (
+      this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.SEMANAS ||
+      this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.SERVICIOS
+    ) {
+      datos.frecuencia_valor = this.paqueteSeleccionado.frecuencia_valor;
+    }
 
     this.asignandoPaquete = true;
     this.clientesService.asignarPaquete(this.clienteId, datos).subscribe({
@@ -312,6 +331,52 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
   calcularDiaGracia(diaCobro: number, diasGracia: number): string {
     const diaFinal = diaCobro + diasGracia;
     return `Día ${diaFinal} de cada mes`;
+  }
+
+  obtenerDiaSemanaTexto(): string {
+    if (!this.paqueteSeleccionado?.fecha_inicio) return '';
+    const fecha = moment(this.paqueteSeleccionado.fecha_inicio);
+    const diasSemana = [
+      'domingo',
+      'lunes',
+      'martes',
+      'miércoles',
+      'jueves',
+      'viernes',
+      'sábado',
+    ];
+    return diasSemana[fecha.day()];
+  }
+
+  obtenerTextoFrecuencia(): string {
+    if (!this.paqueteSeleccionado) return '';
+
+    if (this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.MENSUAL) {
+      return 'Se cobrará mensualmente';
+    }
+
+    if (this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.SEMANAS) {
+      const diaSemana = this.obtenerDiaSemanaTexto();
+      const frecuenciaValor = this.paqueteSeleccionado.frecuencia_valor || 1;
+      return `Se cobrará el ${diaSemana} de cada ${frecuenciaValor} ${
+        frecuenciaValor === 1 ? 'semana' : 'semanas'
+      }`;
+    }
+
+    if (this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.ANUAL) {
+      return 'Se cobrará una vez al año';
+    }
+
+    if (
+      this.paqueteSeleccionado.frecuencia_tipo === EFrecuenciaTipo.SERVICIOS
+    ) {
+      const frecuenciaValor = this.paqueteSeleccionado.frecuencia_valor || 1;
+      return `Se cobrará cada ${frecuenciaValor} ${
+        frecuenciaValor === 1 ? 'servicio' : 'servicios'
+      }`;
+    }
+
+    return '';
   }
 
   volver(): void {

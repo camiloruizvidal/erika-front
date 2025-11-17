@@ -1,9 +1,12 @@
+import { FrecuenciaTipo } from '../../../../../shared/enums/frecuencia-tipo.enum';
+
 export interface IServicio {
   id: number;
   nombre: string;
   valor: number;
   paquetes?: IPaquete[];
 }
+
 interface IPaquete {
   id: number;
   nombre: string;
@@ -18,6 +21,8 @@ export interface ICrearPaqueteRequest {
   fecha_inicio: string;
   fecha_fin?: string | null;
   activo?: boolean;
+  frecuencia_tipo: FrecuenciaTipo;
+  frecuencia_valor?: number | null;
   servicios: {
     nombre_servicio: string;
     valor_servicio: number;
