@@ -100,12 +100,12 @@ export class CrearClienteComponent implements OnInit {
     }
 
     this.clientesService.crear(datos).subscribe({
-      next: () => {
+      next: (cliente) => {
         this.cargando = false;
         this.notificationService
           .exito('Cliente registrado exitosamente')
           .then(() => {
-            this.router.navigate(['/admin/clientes']);
+            this.router.navigate(['/admin/clientes', cliente.id]);
           });
       },
       error: (error) => {

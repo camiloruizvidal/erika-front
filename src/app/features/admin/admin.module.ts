@@ -7,6 +7,7 @@ import { AdminLayoutComponent } from './components/admin-layout/admin-layout.com
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ClientesComponent } from './components/clientes/clientes.component';
 import { CrearClienteComponent } from './components/clientes/crear-cliente/crear-cliente.component';
+import { DetalleClienteComponent } from './components/clientes/detalle-cliente/detalle-cliente.component';
 import { PaquetesComponent } from './components/paquetes/paquetes.component';
 import { DetallePaqueteComponent } from './components/paquetes/detalle-paquete/detalle-paquete.component';
 import { CrearPaqueteComponent } from './components/paquetes/crear-paquete/crear-paquete.component';
@@ -21,38 +22,42 @@ const routes: Routes = [
       {
         path: '',
         redirectTo: 'dashboard',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'dashboard',
-        component: DashboardComponent
+        component: DashboardComponent,
       },
       {
         path: 'clientes',
-        component: ClientesComponent
+        component: ClientesComponent,
       },
       {
         path: 'clientes/crear',
-        component: CrearClienteComponent
+        component: CrearClienteComponent,
+      },
+      {
+        path: 'clientes/:id',
+        component: DetalleClienteComponent,
       },
       {
         path: 'paquetes',
-        component: PaquetesComponent
+        component: PaquetesComponent,
       },
       {
         path: 'paquetes/crear',
-        component: CrearPaqueteComponent
+        component: CrearPaqueteComponent,
       },
       {
         path: 'paquetes/:id',
-        component: DetallePaqueteComponent
+        component: DetallePaqueteComponent,
       },
       {
         path: 'servicios',
-        component: ServiciosComponent
-      }
-    ]
-  }
+        component: ServiciosComponent,
+      },
+    ],
+  },
 ];
 
 @NgModule({
@@ -61,10 +66,11 @@ const routes: Routes = [
     DashboardComponent,
     ClientesComponent,
     CrearClienteComponent,
+    DetalleClienteComponent,
     PaquetesComponent,
     DetallePaqueteComponent,
     CrearPaqueteComponent,
-    ServiciosComponent
+    ServiciosComponent,
   ],
   imports: [
     CommonModule,
@@ -72,8 +78,7 @@ const routes: Routes = [
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    SharedModule
-  ]
+    SharedModule,
+  ],
 })
-export class AdminModule { }
-
+export class AdminModule {}

@@ -6,6 +6,7 @@ import { IPaginado } from '../../../shared/interfaces/paginado.interface';
 import {
   ICliente,
   ICrearClienteRequest,
+  IClientePaquete,
 } from '../components/clientes/interfaces/cliente.interface';
 import { QueryParamsUtil } from '../../../shared/utils/query-params.util';
 
@@ -33,5 +34,22 @@ export class ClientesService {
 
   crear(datos: ICrearClienteRequest): Observable<ICliente> {
     return this.http.post<ICliente>(this.apiUrl, datos);
+  }
+
+  obtenerDetalle(clienteId: number): Observable<ICliente> {
+    return this.http.get<ICliente>(`${this.apiUrl}/${clienteId}`);
+  }
+
+  obtenerPaquetes(clienteId: number): Observable<IClientePaquete[]> {
+    return this.http.get<IClientePaquete[]>(
+      `${this.apiUrl}/${clienteId}/packages`
+    );
+  }
+
+  asignarPaquete(clienteId: number, datos: any): Observable<IClientePaquete> {
+    return this.http.post<IClientePaquete>(
+      `${this.apiUrl}/${clienteId}/packages`,
+      datos
+    );
   }
 }

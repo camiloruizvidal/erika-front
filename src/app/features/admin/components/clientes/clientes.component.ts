@@ -119,11 +119,17 @@ export class ClientesComponent implements OnInit, OnDestroy {
 
   onAccionSeleccionada(evento: { item: ICliente; accion: string }): void {
     const { item, accion } = evento;
-    if (accion === 'pagos') {
+    if (accion === 'detalle') {
+      this.verDetalle(item.id);
+    } else if (accion === 'pagos') {
       console.log('Ver pagos de cliente:', item);
     } else if (accion === 'servicios') {
       console.log('Ver servicios de cliente:', item);
     }
+  }
+
+  verDetalle(clienteId: number): void {
+    this.router.navigate(['/admin/clientes', clienteId]);
   }
 
   formatearEstado(activo: boolean): string {

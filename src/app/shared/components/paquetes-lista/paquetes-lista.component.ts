@@ -15,7 +15,7 @@ export interface IPaqueteEnLista {
   styleUrls: ['./paquetes-lista.component.scss'],
 })
 export class PaquetesListaComponent {
-  @Input() paquetes: IPaqueteEnLista[] | undefined = [];
+  @Input() paquetes: IPaqueteEnLista[] = [];
 
   formatearFecha(fecha: string | null): string {
     if (!fecha) return '-';

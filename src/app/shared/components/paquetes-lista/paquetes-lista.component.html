@@ -1,4 +1,4 @@
-<div *ngIf="paquetes.length === 0" class="text-neutral-500">-</div>
+<div *ngIf="paquetes && paquetes.length === 0" class="text-neutral-500">-</div>
 <div *ngFor="let paquete of paquetes; let last = last" class="mb-2 last:mb-0">
   <div class="flex items-start gap-2">
     <span
