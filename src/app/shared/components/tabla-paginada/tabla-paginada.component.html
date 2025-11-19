@@ -105,37 +105,61 @@
             <td
               *ngFor="let columna of columnas"
               [class.whitespace-nowrap]="
-                !columna.renderizarHtml && !columna.componentePersonalizado
+                !columna.renderizarHtml &&
+                !columna.componentePersonalizado &&
+                !templatesPersonalizados[columna.campo]
               "
               class="px-6 py-4 text-sm text-neutral-900"
             >
               <ng-container
                 *ngIf="
                   columna.componentePersonalizado === 'app-paquetes-lista';
-                  else sinComponente
+                  else templatePersonalizado
                 "
               >
                 <app-paquetes-lista
                   [paquetes]="obtenerValor(item, columna.campo) || []"
                 ></app-paquetes-lista>
               </ng-container>
-              <ng-template #sinComponente>
+              <ng-template #templatePersonalizado>
                 <ng-container
                   *ngIf="
-                    columna.formatear && columna.renderizarHtml;
-                    else formateoSimple
+                    templatesPersonalizados[columna.campo];
+                    else sinTemplate
                   "
                 >
-                  <div [innerHTML]="obtenerHtmlSeguro(columna, item)"></div>
+                  <ng-container
+                    *ngTemplateOutlet="
+                      templatesPersonalizados[columna.campo];
+                      context: {
+                        $implicit: obtenerValor(item, columna.campo),
+                        item: item,
+                        campo: columna.campo
+                      }
+                    "
+                  ></ng-container>
                 </ng-container>
-                <ng-template #formateoSimple>
-                  <ng-container *ngIf="columna.formatear; else valorSimple">
-                    {{
-                      columna.formatear(obtenerValor(item, columna.campo), item)
-                    }}
+                <ng-template #sinTemplate>
+                  <ng-container
+                    *ngIf="
+                      columna.formatear && columna.renderizarHtml;
+                      else formateoSimple
+                    "
+                  >
+                    <div [innerHTML]="obtenerHtmlSeguro(columna, item)"></div>
                   </ng-container>
-                  <ng-template #valorSimple>
-                    {{ obtenerValor(item, columna.campo) }}
+                  <ng-template #formateoSimple>
+                    <ng-container *ngIf="columna.formatear; else valorSimple">
+                      {{
+                        columna.formatear(
+                          obtenerValor(item, columna.campo),
+                          item
+                        )
+                      }}
+                    </ng-container>
+                    <ng-template #valorSimple>
+                      {{ obtenerValor(item, columna.campo) }}
+                    </ng-template>
                   </ng-template>
                 </ng-template>
               </ng-template>

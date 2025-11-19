@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IPaginado } from '../../interfaces/paginado.interface';
 
@@ -32,6 +38,7 @@ export class TablaPaginadaComponent {
   @Input() mostrarBusqueda = true;
   @Input() mostrarPaginacion = true;
   @Input() acciones: boolean = false;
+  @Input() templatesPersonalizados: { [key: string]: TemplateRef<any> } = {};
 
   @Output() crear = new EventEmitter<void>();
   @Output() buscar = new EventEmitter<string>();
@@ -117,7 +124,7 @@ export class TablaPaginadaComponent {
     }
     return Array.from(
       { length: this.datos.meta.total_paginas },
-      (_, i) => i + 1
+      (_, i) => i + 1,
     );
   }
 

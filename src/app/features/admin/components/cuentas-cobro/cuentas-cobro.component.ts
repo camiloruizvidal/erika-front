@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -26,8 +32,24 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
   fechaFin: string = '';
   estados: IEstadoCuentaCobro[] = [];
   cargandoEstados = false;
+  mostrarFiltros = false;
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
+
+  @ViewChild('templateEstado', { static: true })
+  templateEstado!: TemplateRef<any>;
+  @ViewChild('templatePdf', { static: true })
+  templatePdf!: TemplateRef<any>;
+  @ViewChild('templateCorreo', { static: true })
+  templateCorreo!: TemplateRef<any>;
+
+  get templatesPersonalizados(): { [key: string]: TemplateRef<any> } {
+    return {
+      estado: this.templateEstado,
+      tiene_pdf: this.templatePdf,
+      si_envio_correo: this.templateCorreo,
+    };
+  }
 
   columnas: IColumnaTabla[] = [
     { nombre: 'Cliente', campo: 'nombre_cliente', ordenable: false },
@@ -42,7 +64,11 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
       campo: 'fecha_cobro',
       ordenable: false,
       formatear: (valor: Date) => {
-        return new Date(valor).toLocaleDateString('es-CO');
+        const fecha = new Date(valor);
+        const año = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        return `${año}-${mes}-${dia}`;
       },
     },
     {
@@ -57,18 +83,8 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
       },
     },
     { nombre: 'Estado', campo: 'estado', ordenable: false },
-    {
-      nombre: 'PDF',
-      campo: 'tiene_pdf',
-      ordenable: false,
-      formatear: (valor: boolean) => (valor ? 'Sí' : 'No'),
-    },
-    {
-      nombre: 'Correo Enviado',
-      campo: 'si_envio_correo',
-      ordenable: false,
-      formatear: (valor: boolean) => (valor ? 'Sí' : 'No'),
-    },
+    { nombre: 'PDF', campo: 'tiene_pdf', ordenable: false },
+    { nombre: 'Correo Enviado', campo: 'si_envio_correo', ordenable: false },
   ];
 
   constructor(
