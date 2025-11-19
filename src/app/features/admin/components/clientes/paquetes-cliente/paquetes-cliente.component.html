@@ -182,6 +182,9 @@
             <thead class="bg-neutral-100">
               <tr>
                 <th class="px-4 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                  #
+                </th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
                   Fecha de Cobro
                 </th>
                 <th class="px-4 py-2 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">
@@ -199,7 +202,10 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-neutral-200">
-              <tr *ngFor="let pago of pagosPorPaquete[paquete.id]!.data">
+              <tr *ngFor="let pago of pagosPorPaquete[paquete.id]!.data; let i = index">
+                <td class="px-4 py-2 text-sm text-neutral-600">
+                  {{ obtenerNumeroFila(paquete.id, i) }}
+                </td>
                 <td class="px-4 py-2 text-sm text-neutral-900">
                   {{ formatearFechaPago(pago.fecha_cobro) }}
                 </td>
@@ -227,6 +233,61 @@
               </tr>
             </tbody>
           </table>
+
+          <div
+            *ngIf="pagosPorPaquete[paquete.id]?.meta"
+            class="mt-4 flex items-center justify-between"
+          >
+            <div class="text-sm text-neutral-600">
+              Mostrando
+              {{
+                ((paginaActualPorPaquete[paquete.id] || 1) - 1) *
+                  (tamanoPaginaPorPaquete[paquete.id] || 10) +
+                  1
+              }}
+              a
+              {{
+                (paginaActualPorPaquete[paquete.id] || 1) *
+                  (tamanoPaginaPorPaquete[paquete.id] || 10) >
+                (pagosPorPaquete[paquete.id]?.meta?.total || 0)
+                  ? (pagosPorPaquete[paquete.id]?.meta?.total || 0)
+                  : (paginaActualPorPaquete[paquete.id] || 1) *
+                    (tamanoPaginaPorPaquete[paquete.id] || 10)
+              }}
+              de {{ pagosPorPaquete[paquete.id]?.meta?.total || 0 }} resultados
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                (click)="cambiarPaginaPagos(paquete.id, (paginaActualPorPaquete[paquete.id] || 1) - 1)"
+                [disabled]="(paginaActualPorPaquete[paquete.id] || 1) === 1"
+                class="px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50"
+              >
+                Anterior
+              </button>
+              <span class="text-sm text-neutral-600">
+                Página {{ paginaActualPorPaquete[paquete.id] || 1 }} de
+                {{
+                  Math.ceil(
+                    (pagosPorPaquete[paquete.id]?.meta?.total || 0) /
+                      (tamanoPaginaPorPaquete[paquete.id] || 10)
+                  )
+                }}
+              </span>
+              <button
+                (click)="cambiarPaginaPagos(paquete.id, (paginaActualPorPaquete[paquete.id] || 1) + 1)"
+                [disabled]="
+                  (paginaActualPorPaquete[paquete.id] || 1) >=
+                  Math.ceil(
+                    (pagosPorPaquete[paquete.id]?.meta?.total || 0) /
+                      (tamanoPaginaPorPaquete[paquete.id] || 10)
+                  )
+                "
+                class="px-3 py-1 border border-neutral-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-50"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
         </div>
         </div>
       </div>

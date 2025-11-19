@@ -19,10 +19,12 @@ export class PaquetesClienteComponent implements OnInit {
   cargandoPaquetes = false;
   pagosPorPaquete: { [key: number]: IPaginado<IPago> | null } = {};
   cargandoPagosPorPaquete: { [key: number]: boolean } = {};
+  paginaActualPorPaquete: { [key: number]: number } = {};
+  tamanoPaginaPorPaquete: { [key: number]: number } = {};
 
   constructor(
     private clientesService: ClientesService,
-    private cuentasCobroService: CuentasCobroService
+    private cuentasCobroService: CuentasCobroService,
   ) {}
 
   ngOnInit(): void {
@@ -40,6 +42,8 @@ export class PaquetesClienteComponent implements OnInit {
         this.paquetes = respuesta;
         this.cargandoPaquetes = false;
         this.paquetes.forEach((paquete) => {
+          this.paginaActualPorPaquete[paquete.id] = 1;
+          this.tamanoPaginaPorPaquete[paquete.id] = 10;
           this.cargarPagos(paquete.id);
         });
       },
@@ -52,10 +56,13 @@ export class PaquetesClienteComponent implements OnInit {
 
   cargarPagos(clientePaqueteId: number): void {
     this.cargandoPagosPorPaquete[clientePaqueteId] = true;
+    const pagina = this.paginaActualPorPaquete[clientePaqueteId] || 1;
+    const tamanoPagina = this.tamanoPaginaPorPaquete[clientePaqueteId] || 10;
+
     this.cuentasCobroService
       .listarPagos({
-        pagina: 1,
-        tamano_pagina: 10,
+        pagina,
+        tamano_pagina: tamanoPagina,
         cliente_paquete_id: clientePaqueteId,
       })
       .subscribe({
@@ -68,6 +75,23 @@ export class PaquetesClienteComponent implements OnInit {
           this.cargandoPagosPorPaquete[clientePaqueteId] = false;
         },
       });
+  }
+
+  cambiarPaginaPagos(clientePaqueteId: number, pagina: number): void {
+    this.paginaActualPorPaquete[clientePaqueteId] = pagina;
+    this.cargarPagos(clientePaqueteId);
+  }
+
+  cambiarTamanoPaginaPagos(clientePaqueteId: number, tamano: number): void {
+    this.tamanoPaginaPorPaquete[clientePaqueteId] = tamano;
+    this.paginaActualPorPaquete[clientePaqueteId] = 1;
+    this.cargarPagos(clientePaqueteId);
+  }
+
+  obtenerNumeroFila(clientePaqueteId: number, index: number): number {
+    const pagina = this.paginaActualPorPaquete[clientePaqueteId] || 1;
+    const tamanoPagina = this.tamanoPaginaPorPaquete[clientePaqueteId] || 10;
+    return (pagina - 1) * tamanoPagina + index + 1;
   }
 
   descargarPdfPago(id: number): void {
@@ -107,5 +131,6 @@ export class PaquetesClienteComponent implements OnInit {
     const diaFinal = diaCobro + diasGracia;
     return `Día ${diaFinal} de cada mes`;
   }
-}
 
+  Math = Math;
+}
