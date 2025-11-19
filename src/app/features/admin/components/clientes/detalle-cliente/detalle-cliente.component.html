@@ -23,7 +23,7 @@
         [class.text-error-700]="!cliente.activo"
         class="px-3 py-1 rounded-full text-sm font-semibold"
       >
-        {{ cliente.activo ? "Activo" : "Inactivo" }}
+        {{ cliente.activo ? 'Activo' : 'Inactivo' }}
       </span>
       <h2 class="text-2xl font-bold text-neutral-900">
         {{ cliente.nombre_completo }}
@@ -46,7 +46,7 @@
             Segundo Nombre
           </label>
           <p class="text-lg font-semibold text-neutral-900">
-            {{ cliente.segundo_nombre || "-" }}
+            {{ cliente.segundo_nombre || '-' }}
           </p>
         </div>
 
@@ -64,7 +64,7 @@
             Segundo Apellido
           </label>
           <p class="text-lg font-semibold text-neutral-900">
-            {{ cliente.segundo_apellido || "-" }}
+            {{ cliente.segundo_apellido || '-' }}
           </p>
         </div>
 
@@ -82,7 +82,7 @@
             Teléfono
           </label>
           <p class="text-lg font-semibold text-neutral-900">
-            {{ cliente.telefono || "-" }}
+            {{ cliente.telefono || '-' }}
           </p>
         </div>
 
@@ -91,7 +91,7 @@
             Identificación
           </label>
           <p class="text-lg font-semibold text-neutral-900">
-            {{ cliente.identificacion || "-" }}
+            {{ cliente.identificacion || '-' }}
           </p>
         </div>
 
@@ -111,7 +111,7 @@
             Dirección
           </label>
           <p class="text-lg font-semibold text-neutral-900">
-            {{ cliente.direccion || "-" }}
+            {{ cliente.direccion || '-' }}
           </p>
         </div>
       </div>
@@ -145,7 +145,7 @@
           [class.hover:text-neutral-700]="tabActivo !== 'disponibles'"
           class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
         >
-          Paquetes Disponibles
+          Adjuntar paquete
         </button>
       </nav>
     </div>
@@ -291,7 +291,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <div
@@ -349,7 +348,7 @@
                 [class.text-error-700]="!paqueteSeleccionado.activo"
                 class="px-3 py-1 rounded-full text-sm font-semibold"
               >
-                {{ paqueteSeleccionado.activo ? "Activo" : "Inactivo" }}
+                {{ paqueteSeleccionado.activo ? 'Activo' : 'Inactivo' }}
               </span>
               <h4 class="text-lg font-bold text-neutral-900">
                 {{ paqueteSeleccionado.nombre }}
@@ -462,7 +461,7 @@
                       {{
                         servicio.valor !== null
                           ? formatearValor(servicio.valor)
-                          : "-"
+                          : '-'
                       }}
                     </td>
                   </tr>
