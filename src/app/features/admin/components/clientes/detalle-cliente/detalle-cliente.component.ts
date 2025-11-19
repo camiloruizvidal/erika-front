@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ICliente, IClientePaquete } from '../interfaces/cliente.interface';
+import { ICliente } from '../interfaces/cliente.interface';
 import { ClientesService } from '../../../services/clientes.service';
 import { PaquetesService } from '../../../services/paquetes.service';
 import { IPaginado } from '../../../../../shared/interfaces/paginado.interface';
@@ -28,10 +28,8 @@ import 'moment/locale/es';
 })
 export class DetalleClienteComponent implements OnInit, OnDestroy {
   cliente: ICliente | null = null;
-  paquetes: IClientePaquete[] = [];
   paquetesDisponibles: IPaginado<IPaquete> | null = null;
   cargando = false;
-  cargandoPaquetes = false;
   cargandoPaquetesDisponibles = false;
   clienteId: number | null = null;
   tabActivo = 'registrados';
@@ -48,6 +46,7 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
   asignandoPaquete = false;
   errorAsignacion: string | null = null;
   EFrecuenciaTipo = EFrecuenciaTipo;
+
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
 
@@ -125,7 +124,6 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
       next: (respuesta) => {
         this.cliente = respuesta;
         this.cargando = false;
-        this.cargarPaquetes();
       },
       error: (error) => {
         console.error('Error al cargar detalle del cliente:', error);
@@ -134,21 +132,6 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
     });
   }
 
-  cargarPaquetes(): void {
-    if (!this.clienteId) return;
-
-    this.cargandoPaquetes = true;
-    this.clientesService.obtenerPaquetes(this.clienteId).subscribe({
-      next: (respuesta) => {
-        this.paquetes = respuesta;
-        this.cargandoPaquetes = false;
-      },
-      error: (error) => {
-        console.error('Error al cargar paquetes del cliente:', error);
-        this.cargandoPaquetes = false;
-      },
-    });
-  }
 
   formatearFecha(fecha: string | null | undefined): string {
     if (!fecha) return '-';
@@ -307,7 +290,6 @@ export class DetalleClienteComponent implements OnInit, OnDestroy {
           .exito('Paquete asignado exitosamente')
           .then(() => {
             this.cerrarModal();
-            this.cargarPaquetes();
             this.tabActivo = 'registrados';
           });
       },

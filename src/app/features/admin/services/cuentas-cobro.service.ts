@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IPaginado } from '../../../shared/interfaces/paginado.interface';
-import { ICuentaCobro } from '../components/cuentas-cobro/interfaces/cuenta-cobro.interface';
+import {
+  ICuentaCobro,
+  IPago,
+} from '../components/cuentas-cobro/interfaces/cuenta-cobro.interface';
 import { IEstadosCuentaCobroResponse } from '../components/cuentas-cobro/interfaces/estado-cuenta-cobro.interface';
 import { QueryParamsUtil } from '../../../shared/utils/query-params.util';
 
@@ -53,5 +56,27 @@ export class CuentasCobroService {
 
   obtenerEstados(): Observable<IEstadosCuentaCobroResponse> {
     return this.http.get<IEstadosCuentaCobroResponse>(`${this.apiUrl}/estados`);
+  }
+
+  listarPagos(params: {
+    pagina: number;
+    tamano_pagina?: number;
+    cliente_paquete_id: number;
+  }): Observable<IPaginado<IPago>> {
+    const paramsConDefault: any = {
+      pagina: params.pagina,
+      tamano_pagina: params.tamano_pagina ?? 10,
+      cliente_paquete_id: params.cliente_paquete_id,
+    };
+    const queryString = QueryParamsUtil.construir(paramsConDefault);
+    return this.http.get<IPaginado<IPago>>(
+      `${this.apiUrl}/pagos?${queryString}`,
+    );
+  }
+
+  descargarPdfPago(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/pago/pdf`, {
+      responseType: 'blob',
+    });
   }
 }

@@ -8,6 +8,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ClientesComponent } from './components/clientes/clientes.component';
 import { CrearClienteComponent } from './components/clientes/crear-cliente/crear-cliente.component';
 import { DetalleClienteComponent } from './components/clientes/detalle-cliente/detalle-cliente.component';
+import { PagosClienteComponent } from './components/clientes/pagos-cliente/pagos-cliente.component';
+import { PaquetesClienteComponent } from './components/clientes/paquetes-cliente/paquetes-cliente.component';
 import { PaquetesComponent } from './components/paquetes/paquetes.component';
 import { DetallePaqueteComponent } from './components/paquetes/detalle-paquete/detalle-paquete.component';
 import { CrearPaqueteComponent } from './components/paquetes/crear-paquete/crear-paquete.component';
@@ -72,6 +74,8 @@ const routes: Routes = [
     ClientesComponent,
     CrearClienteComponent,
     DetalleClienteComponent,
+    PagosClienteComponent,
+    PaquetesClienteComponent,
     PaquetesComponent,
     DetallePaqueteComponent,
     CrearPaqueteComponent,

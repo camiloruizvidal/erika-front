@@ -1,0 +1,32 @@
+<div>
+  <app-tabla-paginada
+    titulo=""
+    textoBotonCrear=""
+    iconoBotonCrear=""
+    placeholderBusqueda=""
+    [datos]="datosPagos"
+    [cargando]="cargandoPagos"
+    [columnas]="columnasPagos"
+    [templatesPersonalizados]="templatesPersonalizadosPagos"
+    [acciones]="false"
+    [mostrarBusqueda]="false"
+    [mostrarPaginacion]="true"
+    (cambiarPagina)="onCambiarPaginaPagos($event)"
+    (cambiarTamanoPagina)="onCambiarTamanoPaginaPagos($event)"
+  ></app-tabla-paginada>
+</div>
+
+<!-- Template personalizado para PDF de pago -->
+<ng-template #templatePdfPago let-valor let-item="item">
+  <button
+    *ngIf="valor"
+    type="button"
+    (click)="descargarPdfPago(item.id); $event.stopPropagation()"
+    class="text-primary-600 hover:text-primary-700 transition-colors"
+    title="Ver PDF Recibo"
+  >
+    <i class="fas fa-file-pdf text-lg"></i>
+  </button>
+  <span *ngIf="!valor" class="text-neutral-400">-</span>
+</ng-template>
+
