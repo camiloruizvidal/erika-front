@@ -100,8 +100,8 @@ export class TablaPaginadaComponent {
   obtenerValor(item: any, campo: string): any {
     const campos = campo.split('.');
     let valor = item;
-    for (const c of campos) {
-      valor = valor?.[c];
+    for (const campoNombre of campos) {
+      valor = valor?.[campoNombre];
     }
     return valor ?? '';
   }
