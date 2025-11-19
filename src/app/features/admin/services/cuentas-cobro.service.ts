@@ -70,7 +70,7 @@ export class CuentasCobroService {
     };
     const queryString = QueryParamsUtil.construir(paramsConDefault);
     return this.http.get<IPaginado<IPago>>(
-      `${this.apiUrl}/pagos?${queryString}`,
+      `${environment.apiUrl}/api/v1/pagos?${queryString}`,
     );
   }
 
