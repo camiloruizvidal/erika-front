@@ -24,6 +24,7 @@ export class CuentasCobroService {
     si_envio_correo?: string;
     fecha_inicio?: string;
     fecha_fin?: string;
+    paquete_id?: number;
   }): Observable<IPaginado<ICuentaCobro>> {
     const paramsConDefault: any = {
       pagina: params.pagina,
@@ -36,6 +37,7 @@ export class CuentasCobroService {
       }),
       ...(params.fecha_inicio && { fecha_inicio: params.fecha_inicio }),
       ...(params.fecha_fin && { fecha_fin: params.fecha_fin }),
+      ...(params.paquete_id && { paquete_id: params.paquete_id }),
     };
     const queryString = QueryParamsUtil.construir(paramsConDefault);
     return this.http.get<IPaginado<ICuentaCobro>>(

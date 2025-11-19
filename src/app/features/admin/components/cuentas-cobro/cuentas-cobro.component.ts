@@ -42,9 +42,12 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
   templatePdf!: TemplateRef<any>;
   @ViewChild('templateCorreo', { static: true })
   templateCorreo!: TemplateRef<any>;
+  @ViewChild('templateCliente', { static: true })
+  templateCliente!: TemplateRef<any>;
 
   get templatesPersonalizados(): { [key: string]: TemplateRef<any> } {
     return {
+      nombre_cliente: this.templateCliente,
       estado: this.templateEstado,
       tiene_pdf: this.templatePdf,
       si_envio_correo: this.templateCorreo,
@@ -215,6 +218,10 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
 
   onFilaClick(cuentaCobro: ICuentaCobro): void {
     console.log('Click en cuenta de cobro:', cuentaCobro);
+  }
+
+  verDetalleCliente(clienteId: number): void {
+    this.router.navigate(['/admin/clientes', clienteId]);
   }
 
   onOrdenar(orden: { campo: string; direccion: 'asc' | 'desc' }): void {

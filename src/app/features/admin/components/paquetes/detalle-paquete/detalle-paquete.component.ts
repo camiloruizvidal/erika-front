@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPaginado } from '../../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../../shared/components/tabla-paginada/tabla-paginada.component';
@@ -6,9 +11,11 @@ import {
   IPaqueteDetalle,
   IServicioAsociado,
 } from '../interfaces/paquete.interface';
+import { ICuentaCobro } from '../../cuentas-cobro/interfaces/cuenta-cobro.interface';
 import moment from 'moment';
 import 'moment/locale/es';
 import { PaquetesService } from '../../../services/paquetes.service';
+import { CuentasCobroService } from '../../../services/cuentas-cobro.service';
 
 @Component({
   selector: 'app-detalle-paquete',
@@ -20,6 +27,66 @@ export class DetallePaqueteComponent implements OnInit {
   servicios: IServicioAsociado[] = [];
   cargandoPaquete = false;
   paqueteId: number | null = null;
+
+  // Cuentas de cobro
+  datosCuentasCobro: IPaginado<ICuentaCobro> | null = null;
+  cargandoCuentasCobro = false;
+  paginaActualCuentasCobro = 1;
+  tamanoPaginaCuentasCobro = 10;
+
+  @ViewChild('templateEstado', { static: true })
+  templateEstado!: TemplateRef<any>;
+  @ViewChild('templatePdf', { static: true })
+  templatePdf!: TemplateRef<any>;
+  @ViewChild('templateCorreo', { static: true })
+  templateCorreo!: TemplateRef<any>;
+  @ViewChild('templateCliente', { static: true })
+  templateCliente!: TemplateRef<any>;
+
+  get templatesPersonalizados(): { [key: string]: TemplateRef<any> } {
+    return {
+      nombre_cliente: this.templateCliente,
+      estado: this.templateEstado,
+      tiene_pdf: this.templatePdf,
+      si_envio_correo: this.templateCorreo,
+    };
+  }
+
+  columnasCuentasCobro: IColumnaTabla[] = [
+    { nombre: 'Cliente', campo: 'nombre_cliente', ordenable: false },
+    { nombre: 'Correo', campo: 'correo_cliente', ordenable: false },
+    {
+      nombre: 'Identificación',
+      campo: 'identificacion_cliente',
+      ordenable: false,
+    },
+    {
+      nombre: 'Fecha de Cobro',
+      campo: 'fecha_cobro',
+      ordenable: false,
+      formatear: (valor: Date) => {
+        const fecha = new Date(valor);
+        const año = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        return `${año}-${mes}-${dia}`;
+      },
+    },
+    {
+      nombre: 'Valor Total',
+      campo: 'valor_total',
+      ordenable: false,
+      formatear: (valor: number) => {
+        return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(valor);
+      },
+    },
+    { nombre: 'Estado', campo: 'estado', ordenable: false },
+    { nombre: 'PDF', campo: 'tiene_pdf', ordenable: false },
+    { nombre: 'Correo Enviado', campo: 'si_envio_correo', ordenable: false },
+  ];
 
   columnasServicios: IColumnaTabla[] = [
     { nombre: 'Nombre', campo: 'nombre', ordenable: false },
@@ -40,7 +107,8 @@ export class DetallePaqueteComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private paquetesService: PaquetesService
+    private paquetesService: PaquetesService,
+    private cuentasCobroService: CuentasCobroService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +116,7 @@ export class DetallePaqueteComponent implements OnInit {
       this.paqueteId = +params['id'];
       if (this.paqueteId) {
         this.cargarDetallePaquete();
+        this.cargarCuentasCobro();
       }
     });
   }
@@ -119,5 +188,58 @@ export class DetallePaqueteComponent implements OnInit {
 
   volver(): void {
     this.router.navigate(['/admin/paquetes']);
+  }
+
+  cargarCuentasCobro(): void {
+    if (!this.paqueteId) return;
+
+    this.cargandoCuentasCobro = true;
+    this.cuentasCobroService
+      .listar({
+        pagina: this.paginaActualCuentasCobro,
+        tamano_pagina: this.tamanoPaginaCuentasCobro,
+        paquete_id: this.paqueteId,
+      })
+      .subscribe({
+        next: (respuesta) => {
+          this.datosCuentasCobro = respuesta;
+          this.cargandoCuentasCobro = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar cuentas de cobro:', error);
+          this.cargandoCuentasCobro = false;
+        },
+      });
+  }
+
+  onCambiarPaginaCuentasCobro(pagina: number): void {
+    this.paginaActualCuentasCobro = pagina;
+    this.cargarCuentasCobro();
+  }
+
+  onCambiarTamanoPaginaCuentasCobro(tamano: number): void {
+    this.tamanoPaginaCuentasCobro = tamano;
+    this.paginaActualCuentasCobro = 1;
+    this.cargarCuentasCobro();
+  }
+
+  onFilaClickCuentasCobro(cuentaCobro: ICuentaCobro): void {
+    this.router.navigate(['/admin/clientes', cuentaCobro.cliente_id]);
+  }
+
+  verDetalleCliente(clienteId: number): void {
+    this.router.navigate(['/admin/clientes', clienteId]);
+  }
+
+  descargarPdf(id: number): void {
+    this.cuentasCobroService.descargarPdf(id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: (error) => {
+        console.error('Error al descargar PDF:', error);
+      },
+    });
   }
 }

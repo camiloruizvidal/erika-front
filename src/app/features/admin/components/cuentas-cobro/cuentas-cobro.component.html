@@ -151,6 +151,18 @@
     (accionSeleccionada)="onAccionSeleccionada($event)"
   ></app-tabla-paginada>
 </div>
+
+<!-- Templates personalizados -->
+<ng-template #templateCliente let-valor let-item="item">
+  <button
+    type="button"
+    (click)="verDetalleCliente(item.cliente_id); $event.stopPropagation()"
+    class="text-primary-600 hover:text-primary-700 hover:underline transition-colors font-medium"
+  >
+    {{ valor }}
+  </button>
+</ng-template>
+
 <ng-template #templateEstado let-valor let-item="item">
   <span
     *ngIf="valor === 'pendiente'"
