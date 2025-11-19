@@ -1,0 +1,49 @@
+<div class="space-y-6">
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+  >
+    <h2 class="text-2xl font-bold text-neutral-900">Cuentas de Cobro</h2>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-soft p-4">
+    <div class="flex-1 relative mb-4">
+      <i
+        class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"
+      ></i>
+      <input
+        type="text"
+        [(ngModel)]="terminoBusqueda"
+        (input)="onBuscar(terminoBusqueda)"
+        placeholder="Buscar por nombre del cliente o identificación..."
+        class="w-full pl-10 pr-10 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+      />
+      <button
+        *ngIf="terminoBusqueda"
+        (click)="onLimpiarBusqueda()"
+        type="button"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <app-tabla-paginada
+    titulo=""
+    textoBotonCrear=""
+    iconoBotonCrear=""
+    placeholderBusqueda=""
+    [datos]="datos"
+    [cargando]="cargando"
+    [columnas]="columnas"
+    [acciones]="true"
+    [mostrarBusqueda]="false"
+    [mostrarPaginacion]="true"
+    (cambiarPagina)="onCambiarPagina($event)"
+    (cambiarTamanoPagina)="onCambiarTamanoPagina($event)"
+    (filaClick)="onFilaClick($event)"
+    (ordenar)="onOrdenar($event)"
+    (accionSeleccionada)="onAccionSeleccionada($event)"
+  ></app-tabla-paginada>
+</div>
+

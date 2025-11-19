@@ -12,6 +12,7 @@ import { PaquetesComponent } from './components/paquetes/paquetes.component';
 import { DetallePaqueteComponent } from './components/paquetes/detalle-paquete/detalle-paquete.component';
 import { CrearPaqueteComponent } from './components/paquetes/crear-paquete/crear-paquete.component';
 import { ServiciosComponent } from './components/servicios/servicios.component';
+import { CuentasCobroComponent } from './components/cuentas-cobro/cuentas-cobro.component';
 import { SharedModule } from '../../shared/shared.module';
 
 const routes: Routes = [
@@ -56,6 +57,10 @@ const routes: Routes = [
         path: 'servicios',
         component: ServiciosComponent,
       },
+      {
+        path: 'cuentas-cobro',
+        component: CuentasCobroComponent,
+      },
     ],
   },
 ];
@@ -71,6 +76,7 @@ const routes: Routes = [
     DetallePaqueteComponent,
     CrearPaqueteComponent,
     ServiciosComponent,
+    CuentasCobroComponent,
   ],
   imports: [
     CommonModule,
