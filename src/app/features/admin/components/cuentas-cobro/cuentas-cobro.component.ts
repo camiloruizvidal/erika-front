@@ -22,12 +22,16 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
   private busquedaSubscription?: Subscription;
 
   columnas: IColumnaTabla[] = [
-    { nombre: 'Cliente', campo: 'nombreCliente', ordenable: false },
-    { nombre: 'Correo', campo: 'correoCliente', ordenable: false },
-    { nombre: 'Identificación', campo: 'identificacionCliente', ordenable: false },
+    { nombre: 'Cliente', campo: 'nombre_cliente', ordenable: false },
+    { nombre: 'Correo', campo: 'correo_cliente', ordenable: false },
+    {
+      nombre: 'Identificación',
+      campo: 'identificacion_cliente',
+      ordenable: false,
+    },
     {
       nombre: 'Fecha de Cobro',
-      campo: 'fechaCobro',
+      campo: 'fecha_cobro',
       ordenable: false,
       formatear: (valor: Date) => {
         return new Date(valor).toLocaleDateString('es-CO');
@@ -35,7 +39,7 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
     },
     {
       nombre: 'Valor Total',
-      campo: 'valorTotal',
+      campo: 'valor_total',
       ordenable: false,
       formatear: (valor: number) => {
         return new Intl.NumberFormat('es-CO', {
@@ -47,13 +51,13 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
     { nombre: 'Estado', campo: 'estado', ordenable: false },
     {
       nombre: 'PDF',
-      campo: 'tienePdf',
+      campo: 'tiene_pdf',
       ordenable: false,
       formatear: (valor: boolean) => (valor ? 'Sí' : 'No'),
     },
     {
       nombre: 'Correo Enviado',
-      campo: 'siEnvioCorreo',
+      campo: 'si_envio_correo',
       ordenable: false,
       formatear: (valor: boolean) => (valor ? 'Sí' : 'No'),
     },
@@ -61,7 +65,7 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
 
   constructor(
     private cuentasCobroService: CuentasCobroService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -142,7 +146,7 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
     const { item, accion } = evento;
     if (accion === 'detalle') {
       console.log('Ver detalle de cuenta de cobro:', item);
-    } else if (accion === 'pdf' && item.tienePdf) {
+    } else if (accion === 'pdf' && item.tiene_pdf) {
       this.descargarPdf(item.id);
     }
   }
@@ -159,4 +163,3 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
     });
   }
 }
-

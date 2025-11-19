@@ -1,14 +1,13 @@
 export interface ICuentaCobro {
   id: number;
-  clienteId: number;
-  nombreCliente: string;
-  correoCliente: string;
-  identificacionCliente: string | null;
-  fechaCobro: Date;
-  valorTotal: number;
+  cliente_id: number;
+  nombre_cliente: string;
+  correo_cliente: string;
+  identificacion_cliente: string | null;
+  fecha_cobro: Date;
+  valor_total: number;
   estado: string;
-  tienePdf: boolean;
-  siEnvioCorreo: boolean;
-  fechaEnvioCorreo: Date | null;
+  tiene_pdf: boolean;
+  si_envio_correo: boolean;
+  fecha_envio_correo: Date | null;
 }
-
