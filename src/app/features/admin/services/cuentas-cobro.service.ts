@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IPaginado } from '../../../shared/interfaces/paginado.interface';
 import { ICuentaCobro } from '../components/cuentas-cobro/interfaces/cuenta-cobro.interface';
+import { IEstadosCuentaCobroResponse } from '../components/cuentas-cobro/interfaces/estado-cuenta-cobro.interface';
 import { QueryParamsUtil } from '../../../shared/utils/query-params.util';
 
 @Injectable({
@@ -18,14 +19,28 @@ export class CuentasCobroService {
     pagina: number;
     tamano_pagina?: number;
     filtro?: string;
+    estado?: string;
+    tiene_pdf?: string;
+    si_envio_correo?: string;
+    fecha_inicio?: string;
+    fecha_fin?: string;
   }): Observable<IPaginado<ICuentaCobro>> {
-    const paramsConDefault = {
+    const paramsConDefault: any = {
       pagina: params.pagina,
       tamano_pagina: params.tamano_pagina ?? 10,
       ...(params.filtro && { filtro: params.filtro }),
+      ...(params.estado && { estado: params.estado }),
+      ...(params.tiene_pdf && { tiene_pdf: params.tiene_pdf }),
+      ...(params.si_envio_correo && {
+        si_envio_correo: params.si_envio_correo,
+      }),
+      ...(params.fecha_inicio && { fecha_inicio: params.fecha_inicio }),
+      ...(params.fecha_fin && { fecha_fin: params.fecha_fin }),
     };
     const queryString = QueryParamsUtil.construir(paramsConDefault);
-    return this.http.get<IPaginado<ICuentaCobro>>(`${this.apiUrl}?${queryString}`);
+    return this.http.get<IPaginado<ICuentaCobro>>(
+      `${this.apiUrl}?${queryString}`,
+    );
   }
 
   descargarPdf(id: number): Observable<Blob> {
@@ -33,5 +48,8 @@ export class CuentasCobroService {
       responseType: 'blob',
     });
   }
-}
 
+  obtenerEstados(): Observable<IEstadosCuentaCobroResponse> {
+    return this.http.get<IEstadosCuentaCobroResponse>(`${this.apiUrl}/estados`);
+  }
+}

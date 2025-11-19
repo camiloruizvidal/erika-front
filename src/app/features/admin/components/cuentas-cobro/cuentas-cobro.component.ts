@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { IPaginado } from '../../../../shared/interfaces/paginado.interface';
 import { IColumnaTabla } from '../../../../shared/components/tabla-paginada/tabla-paginada.component';
 import { ICuentaCobro } from './interfaces/cuenta-cobro.interface';
+import { IEstadoCuentaCobro } from './interfaces/estado-cuenta-cobro.interface';
 import { CuentasCobroService } from '../../services/cuentas-cobro.service';
 
 @Component({
@@ -18,6 +19,13 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
   paginaActual = 1;
   tamanoPagina = 10;
   terminoBusqueda = '';
+  estadoFiltro: string | null = null;
+  tienePdfFiltro: string | null = null;
+  siEnvioCorreoFiltro: string | null = null;
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  estados: IEstadoCuentaCobro[] = [];
+  cargandoEstados = false;
   private busquedaSubject = new Subject<string>();
   private busquedaSubscription?: Subscription;
 
@@ -76,7 +84,22 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
         this.paginaActual = 1;
         this.cargarCuentasCobro();
       });
+    this.cargarEstados();
     this.cargarCuentasCobro();
+  }
+
+  cargarEstados(): void {
+    this.cargandoEstados = true;
+    this.cuentasCobroService.obtenerEstados().subscribe({
+      next: (respuesta) => {
+        this.estados = respuesta.estados;
+        this.cargandoEstados = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar estados:', error);
+        this.cargandoEstados = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -89,6 +112,11 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
       pagina: number;
       tamano_pagina?: number;
       filtro?: string;
+      estado?: string;
+      tiene_pdf?: string;
+      si_envio_correo?: string;
+      fecha_inicio?: string;
+      fecha_fin?: string;
     } = {
       pagina: this.paginaActual,
     };
@@ -99,6 +127,26 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
 
     if (this.terminoBusqueda && this.terminoBusqueda.trim()) {
       params.filtro = this.terminoBusqueda.trim();
+    }
+
+    if (this.estadoFiltro) {
+      params.estado = this.estadoFiltro;
+    }
+
+    if (this.tienePdfFiltro && this.tienePdfFiltro !== 'all') {
+      params.tiene_pdf = this.tienePdfFiltro;
+    }
+
+    if (this.siEnvioCorreoFiltro && this.siEnvioCorreoFiltro !== 'all') {
+      params.si_envio_correo = this.siEnvioCorreoFiltro;
+    }
+
+    if (this.fechaInicio) {
+      params.fecha_inicio = this.fechaInicio;
+    }
+
+    if (this.fechaFin) {
+      params.fecha_fin = this.fechaFin;
     }
 
     this.cuentasCobroService.listar(params).subscribe({
@@ -119,6 +167,21 @@ export class CuentasCobroComponent implements OnInit, OnDestroy {
 
   onLimpiarBusqueda(): void {
     this.terminoBusqueda = '';
+    this.paginaActual = 1;
+    this.cargarCuentasCobro();
+  }
+
+  onLimpiarFiltros(): void {
+    this.estadoFiltro = null;
+    this.tienePdfFiltro = null;
+    this.siEnvioCorreoFiltro = null;
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.paginaActual = 1;
+    this.cargarCuentasCobro();
+  }
+
+  onFiltroChange(): void {
     this.paginaActual = 1;
     this.cargarCuentasCobro();
   }
